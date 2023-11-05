@@ -1,10 +1,10 @@
 package com.traverse.storage;
 
+import com.traverse.storage.group.models.Message;
+import com.traverse.storage.sqs.controller.SQSMessageSender;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import io.awspring.cloud.messaging.listener.annotation.SqsListener;
 import org.slf4j.Logger;
 
 @SpringBootApplication
@@ -12,13 +12,14 @@ import org.slf4j.Logger;
 public class StorageApplication {
     Logger logger= LoggerFactory.getLogger(StorageApplication.class);
 
+    public StorageApplication(SQSMessageSender sender) {
+        sender.sendMessage(new Message("Bryan", "This is the message"));
+    }
     public static void main(String[] args) {
+
         SpringApplication.run(StorageApplication.class, args);
+
     }
 
-    @SqsListener("https://sqs.us-east-1.amazonaws.com/616401808986/FarhanQueue")
-    public void receiveStringMessage(final String message) {
-        logger.info("message received {}", message);
-    }
 
 }
