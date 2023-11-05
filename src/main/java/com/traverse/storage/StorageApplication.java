@@ -13,13 +13,10 @@ public class StorageApplication {
     Logger logger= LoggerFactory.getLogger(StorageApplication.class);
 
     public StorageApplication(SQSMessageSender sender) {
-        sender.sendMessage(new Message("Bryan", "This is the message"));
+        sender.sendMessage(new Message("Bryan Author", "Bryan's message sent."));
     }
     public static void main(String[] args) {
-
         SpringApplication.run(StorageApplication.class, args);
-
     }
-
 
 }
