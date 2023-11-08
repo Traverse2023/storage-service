@@ -1,0 +1,18 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto11
+  build:
+    commands:
+      - echo Build started on `date`
+      - mvn clean install
+  post_build:
+    commands:
+      - echo Build completed
+artifacts:
+  files:
+    - target/storage-0.0.1-SNAPSHOT.jar
+    - appspec.yml
+    
