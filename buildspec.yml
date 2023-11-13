@@ -9,11 +9,15 @@ phases:
       - echo Build started on `date`
       - mvn spring-boot:build-image
       - mvn clean install
+      - mv target/*.jar storage-0.0.1-SNAPSHOT.jar
   post_build:
     commands:
       - echo Build completed
 artifacts:
   files:
-    - target/storage-0.0.1-SNAPSHOT.jar
+    - storage-0.0.1-SNAPSHOT.jar
     - appspec.yml
+
+
+
     
