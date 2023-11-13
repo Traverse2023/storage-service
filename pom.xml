@@ -51,11 +51,11 @@
 			<artifactId>spring-cloud-aws-messaging</artifactId>
 			<version>2.2.4.RELEASE</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>5.3.10.RELEASE</version> <!-- Adjust version to the desired version, e.g., 5.3.10 -->
-		</dependency>
+			<version>5.3.10.RELEASE</version> 
+		</dependency> -->
 	</dependencies>
 
 	<build>
