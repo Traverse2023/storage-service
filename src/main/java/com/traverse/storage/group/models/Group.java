@@ -12,9 +12,15 @@ import java.util.ArrayList;
 public class Group {
     @Id
     private String id;
+    private String name;
     private ArrayList<Channel> channels;
 
     public Group(ArrayList<Channel> channels) {
         this.channels = channels;
     }
+    public Group(String name) {
+        this.name = name;
+    }
 }
+
+

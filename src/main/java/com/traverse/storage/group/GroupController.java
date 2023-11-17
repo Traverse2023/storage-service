@@ -2,9 +2,7 @@ package com.traverse.storage.group;
 
 import com.traverse.storage.group.models.Group;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +20,12 @@ public class GroupController {
     @GetMapping()
     public List<Group> getGroups() {
         return groupService.getGroups();
+    }
+
+    @PostMapping("/createGroup")
+    public void createGroup(@RequestBody String requestBody) {
+        System.out.println("REQUEST BODY: " + requestBody);
+        String name = requestBody.split("=")[1];
+//        groupService.createGroup(name);
     }
 }

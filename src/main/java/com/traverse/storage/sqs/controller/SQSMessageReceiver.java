@@ -1,18 +1,19 @@
 
 package com.traverse.storage.sqs.controller;
-
+import com.traverse.storage.utils.PostRequestSender;
 import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
 import org.springframework.cloud.aws.messaging.listener.SqsMessageDeletionPolicy;
 import org.springframework.cloud.aws.messaging.listener.annotation.SqsListener;
 import org.springframework.stereotype.Component;
-import lombok.extern.slf4j.Slf4j;
-import com.traverse.storage.group.models.Message;
+import com.traverse.storage.group.GroupService;
+// import lombok.extern.slf4j.Slf4j;
+// import com.traverse.storage.group.models.Message;
+import org.json.JSONObject;  
+import org.json.JSONArray;
 
-/**
- * @author pratikdas
- *
- */
-@Slf4j
+import java.util.Objects;
+
+// @Slf4j
 @Component
 @EnableSqs
 public class SQSMessageReceiver {
@@ -20,7 +21,18 @@ public class SQSMessageReceiver {
 	public void receiveStringMessage(String message) {
 //		log.info("Receiving message from SQS...\nReceived: Timestamp: {}\nAuthor: {}\nMessage: {}",
 //				message.getTime(), message.getAuthor(), message.getMessage());
-		System.out.println(message);
+		JSONObject jsonObject = new JSONObject(message);
+		System.out.println(jsonObject);
+		String task = jsonObject.getString("task");
+		if (Objects.equals(task, "createGroup")) this.createGroupOnMongo(jsonObject);
+	}
+
+	public void createGroupOnMongo(JSONObject group) {
+		PostRequestSender postRequestSender = new PostRequestSender();
+		System.out.println("Creating group on Mongo...");
+		String name = group.getString("name");
+		String body = String.format("{ \"name\": \"%s\" }", name);
+		postRequestSender.sendPostRequest(body,"api/v1/groups/createGroup");
 	}
 }
 

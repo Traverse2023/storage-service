@@ -2,8 +2,7 @@ package com.traverse.storage.sqs;
 
 import com.amazonaws.services.sqs.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.traverse.storage.group.models.Message;
-import lombok.extern.slf4j.Slf4j;
+// import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.messaging.config.QueueMessageHandlerFactory;
 import org.springframework.cloud.aws.messaging.config.SimpleMessageListenerContainerFactory;
@@ -14,11 +13,10 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.handler.annotation.support.PayloadMethodArgumentResolver;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 
 @Configuration
-@Slf4j
+// @Slf4j
 public class SQSConfig {
     @Value("${cloud.aws.region.static}")
     private String region;
