@@ -12,5 +12,6 @@ spring:
   data:
     mongodb:
       uri: mongodb+srv://fm1539:fMDhvPfP922X8rXN@traversecluster.fk3mwfb.mongodb.net/?retryWrites=true&w=majority
+      database: Traverse
   main:
     allow-bean-definition-overriding: true

@@ -30,9 +30,9 @@ public class SQSMessageReceiver {
 	public void createGroupOnMongo(JSONObject group) {
 		PostRequestSender postRequestSender = new PostRequestSender();
 		System.out.println("Creating group on Mongo...");
-		String name = group.getString("name");
+		String name = group.getString("groupName");
 		String body = String.format("{ \"name\": \"%s\" }", name);
-		postRequestSender.sendPostRequest(body,"api/v1/groups/createGroup");
+		postRequestSender.sendPostRequest(body,"/api/v1/groups/createGroup");
 	}
 }
 
