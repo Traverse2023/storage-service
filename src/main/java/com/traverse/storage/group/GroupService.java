@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class GroupService {
 
 
     public List<Group> getGroups() {
-        Message msg = new Message("isfar", "Hey");
+        Message msg = new Message("isfar", LocalDateTime.now(), "Hey");
         ArrayList<Message> msgs = new ArrayList<Message>();
         msgs.add(msg);
         Channel channel = new Channel("general", msgs);

@@ -1,6 +1,9 @@
 
 package com.traverse.storage.sqs.controller;
+import com.traverse.storage.group.models.Group;
+import com.traverse.storage.group.models.Message;
 import com.traverse.storage.utils.PostRequestSender;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
 import org.springframework.cloud.aws.messaging.listener.SqsMessageDeletionPolicy;
 import org.springframework.cloud.aws.messaging.listener.annotation.SqsListener;
@@ -15,16 +18,14 @@ import java.util.Objects;
 
 // @Slf4j
 @Component
+@Slf4j
 @EnableSqs
 public class SQSMessageReceiver {
 	@SqsListener(value = "${cloud.aws.end_point.uri}", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
-	public void receiveStringMessage(String message) {
+	public void receiveStringMessage(Message message) {
 //		log.info("Receiving message from SQS...\nReceived: Timestamp: {}\nAuthor: {}\nMessage: {}",
 //				message.getTime(), message.getAuthor(), message.getMessage());
-		JSONObject jsonObject = new JSONObject(message);
-		System.out.println(jsonObject);
-		String task = jsonObject.getString("task");
-		if (Objects.equals(task, "createGroup")) this.createGroupOnMongo(jsonObject);
+		log.info("Message received: {}", message.getMessage());
 	}
 
 	public void createGroupOnMongo(JSONObject group) {

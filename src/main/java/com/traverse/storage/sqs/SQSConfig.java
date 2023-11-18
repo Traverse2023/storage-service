@@ -53,8 +53,8 @@ public class SQSConfig {
         QueueMessageHandlerFactory factory = new QueueMessageHandlerFactory();
         factory.setAmazonSqs(amazonSQS());
         MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
-        messageConverter.setObjectMapper(objectMapper());
-//        messageConverter.setSerializedPayloadClass(Message.class);
+        //messageConverter.setObjectMapper(objectMapper());
+        //messageConverter.setSerializedPayloadClass(Message.class);
         messageConverter.setStrictContentTypeMatch(false);
         factory.setArgumentResolvers(Collections.singletonList(new PayloadMethodArgumentResolver(messageConverter)));
         return factory;
