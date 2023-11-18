@@ -16,7 +16,7 @@ import com.traverse.storage.group.models.Message;
 @Component
 @EnableSqs
 public class SQSMessageReceiver {
-	@SqsListener(value = "${cloud.aws.end_point.uri}", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
+	@SqsListener(value = "${cloud.aws.end_point.uri}", deletionPolicy = SqsMessageDeletionPolicy.NEVER)
 	public void receiveStringMessage(String message) {
 //		log.info("Receiving message from SQS...\nReceived: Timestamp: {}\nAuthor: {}\nMessage: {}",
 //				message.getTime(), message.getAuthor(), message.getMessage());
