@@ -3,6 +3,7 @@ package com.traverse.storage.sqs;
 import com.amazonaws.services.sqs.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 // import lombok.extern.slf4j.Slf4j;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.messaging.config.QueueMessageHandlerFactory;
 import org.springframework.cloud.aws.messaging.config.SimpleMessageListenerContainerFactory;
@@ -23,7 +24,10 @@ public class SQSConfig {
 
     @Bean
     ObjectMapper objectMapper() {
-        return new ObjectMapper();
+
+        ObjectMapper mapper =  new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
     }
     @Primary
     @Bean
@@ -53,8 +57,7 @@ public class SQSConfig {
         QueueMessageHandlerFactory factory = new QueueMessageHandlerFactory();
         factory.setAmazonSqs(amazonSQS());
         MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
-        //messageConverter.setObjectMapper(objectMapper());
-        //messageConverter.setSerializedPayloadClass(Message.class);
+        messageConverter.setObjectMapper(objectMapper());
         messageConverter.setStrictContentTypeMatch(false);
         factory.setArgumentResolvers(Collections.singletonList(new PayloadMethodArgumentResolver(messageConverter)));
         return factory;

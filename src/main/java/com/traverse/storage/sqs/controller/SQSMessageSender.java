@@ -18,22 +18,21 @@ import java.util.Map;
 @Component
 @Slf4j
 public class SQSMessageSender {
-
     private final QueueMessagingTemplate template;
+    private final ObjectMapper mapper;
     @Value("${cloud.aws.end_point.uri}")
     private String QUEUE_URL;
 
-
     @Autowired
-    public SQSMessageSender(QueueMessagingTemplate template) {
+    public SQSMessageSender(QueueMessagingTemplate template, ObjectMapper mapper) {
+        this.mapper = mapper;
         this.template = template;
     }
 
     public void sendMessage(@RequestBody Message message) {
         log.info("Sending message to SQS. \n Message: {}", message.getMessage());
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new JavaTimeModule());
+
             String  jsonString = mapper.writeValueAsString(message);
             log.info("Sending message: {}", jsonString);
             template.send(QUEUE_URL, MessageBuilder
