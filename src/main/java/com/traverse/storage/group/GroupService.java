@@ -5,34 +5,44 @@ import com.traverse.storage.group.models.Group;
 import com.traverse.storage.group.models.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.traverse.storage.group.GroupRepository;
+
 @Service
 public class GroupService {
 
     @Autowired
-    private GroupRepository groupRepository;
+    private MongoTemplate mongoTemplate;
+
+
+//    @Autowired
+//    public GroupService() {
+//
+//    }
 
 
     public List<Group> getGroups() {
         Message msg = new Message("isfar", "Hey");
         ArrayList<Message> msgs = new ArrayList<Message>();
         msgs.add(msg);
-        Channel channel = new Channel("general", msgs);
+        Channel channel = new Channel("general");
         ArrayList<Channel> channels = new ArrayList<Channel>();
         channels.add(channel);
         Group group = new Group(channels);
 
-        groupRepository.insert(group);
+        mongoTemplate.insert(group);
         return List.of(
                 group
         );
     }
 
     public Group addGroup(String name) {
-        return groupRepository.insert(new Group(name));
+        return mongoTemplate.insert(new Group(name));
     }
 }

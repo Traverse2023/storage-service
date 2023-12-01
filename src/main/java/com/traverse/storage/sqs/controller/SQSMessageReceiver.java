@@ -1,6 +1,7 @@
 
 package com.traverse.storage.sqs.controller;
 import com.traverse.storage.utils.PostRequestSender;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
 import org.springframework.cloud.aws.messaging.listener.SqsMessageDeletionPolicy;
 import org.springframework.cloud.aws.messaging.listener.annotation.SqsListener;
@@ -17,6 +18,8 @@ import java.util.Objects;
 @Component
 @EnableSqs
 public class SQSMessageReceiver {
+	@Autowired
+	private GroupService groupService;
 	@SqsListener(value = "${cloud.aws.end_point.uri}", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
 	public void receiveStringMessage(String message) {
 //		log.info("Receiving message from SQS...\nReceived: Timestamp: {}\nAuthor: {}\nMessage: {}",
@@ -27,12 +30,11 @@ public class SQSMessageReceiver {
 		if (Objects.equals(task, "createGroup")) this.createGroupOnMongo(jsonObject);
 	}
 
+
 	public void createGroupOnMongo(JSONObject group) {
-		PostRequestSender postRequestSender = new PostRequestSender();
 		System.out.println("Creating group on Mongo...");
 		String name = group.getString("groupName");
-		String body = String.format("{ \"name\": \"%s\" }", name);
-		postRequestSender.sendPostRequest(body,"/api/v1/groups/createGroup");
+		groupService.addGroup(name);
 	}
 }
 

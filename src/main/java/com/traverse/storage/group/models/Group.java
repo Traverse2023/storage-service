@@ -12,7 +12,7 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Document
+@Document(collection = "group")
 public class Group {
     @Id
     private String id;
@@ -24,6 +24,10 @@ public class Group {
     }
     public Group(String name) {
         this.name = name;
+        Channel channel = new Channel("general");
+        ArrayList<Channel> channels = new ArrayList<Channel>();
+        channels.add(channel);
+        this.channels = channels;
     }
 }
 
