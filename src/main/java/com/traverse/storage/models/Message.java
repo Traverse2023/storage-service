@@ -1,19 +1,22 @@
-package com.traverse.storage.group.models;
+package com.traverse.storage.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-
 import java.time.LocalDateTime;
-import java.util.Date;
+
 
 @Data
+@Builder
+@AllArgsConstructor
 public class Message {
+    private ChatMessageType type;
+    private String email;
     private String author;
-    private LocalDateTime time;
     private String message;
+    private LocalDateTime dateTime;
+    private byte[] attachment;
+    private String groupId;
+    private String channelName;
 
-    public Message(String author, String message) {
-        this.author = author;
-        this.message = message;
-        this.time = LocalDateTime.now();
-    }
 }

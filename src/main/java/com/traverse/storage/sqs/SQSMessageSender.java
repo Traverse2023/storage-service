@@ -1,6 +1,6 @@
-package com.traverse.storage.sqs.controller;
+package com.traverse.storage.sqs;
 
-import com.traverse.storage.group.models.Message;
+import com.traverse.storage.models.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

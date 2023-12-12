@@ -1,6 +1,6 @@
-package com.traverse.storage.group.models;
+package com.traverse.storage.models;
 
-import com.traverse.storage.group.models.Channel;
+
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

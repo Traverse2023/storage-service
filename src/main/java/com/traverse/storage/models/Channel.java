@@ -1,4 +1,4 @@
-package com.traverse.storage.group.models;
+package com.traverse.storage.models;
 
 import lombok.Data;
 
