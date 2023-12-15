@@ -36,10 +36,7 @@ public class GroupService {
         channels.add(channel);
         Group group = new Group(channels);
 
-        mongoTemplate.insert(group);
-        return List.of(
-                group
-        );
+        return mongoTemplate.findAll(Group.class);
     }
 
     public Group addGroup(String name) {

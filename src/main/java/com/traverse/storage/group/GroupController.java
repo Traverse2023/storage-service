@@ -23,7 +23,7 @@ public class GroupController {
     public Group createGroup(@RequestBody String requestBody) {
         System.out.println("REQUEST BODY: " + requestBody);
         JSONObject jsonBody = new JSONObject(requestBody);
-        String name = jsonBody.getString("name");
-        return groupService.addGroup(name);
+        String groupName = jsonBody.getString("groupName");
+        return groupService.addGroup(groupName);
     }
 }
