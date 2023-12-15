@@ -17,11 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @EnableSqs
 public class SQSMessageReceiver {
-	@SqsListener(value = "${cloud.aws.end_point.uri}", deletionPolicy = SqsMessageDeletionPolicy.NEVER)
-	public void receiveStringMessage(Message message) {
-		log.info("Receiving message from SQS...{}", message.toString());
-		System.out.println(message);
-	}
+
 }
 
 

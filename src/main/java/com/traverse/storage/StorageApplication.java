@@ -8,22 +8,27 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.slf4j.Logger;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
 @SpringBootApplication
 
 public class StorageApplication {
     Logger logger= LoggerFactory.getLogger(StorageApplication.class);
 
     public StorageApplication(SQSMessageSender sender) {
+
         sender.sendMessage(Message.builder()
-                .message("This is bryan's message.")
-                .email("briplomo@gmail.com")
-                .attachment(new byte[0])
-                .type(ChatMessageType.CREATE)
-                .groupId("12345")
-                .channelName("general")
-                .author("Bryan")
-                .build()
+                    .message("This is bryan's message from spring.")
+                    .email("briplomo@gmail.com")
+                    .groupId("65728e07e51fdf72df913759")
+                    .channelName("general")
+                    .dateTime(LocalDateTime.now())
+                    .attachment(new byte[1])
+                    .author("Bryan")
+                    .build()
         );
+
     }
     public static void main(String[] args) {
         SpringApplication.run(StorageApplication.class, args);

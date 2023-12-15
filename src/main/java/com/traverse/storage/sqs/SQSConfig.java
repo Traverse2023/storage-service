@@ -2,7 +2,8 @@ package com.traverse.storage.sqs;
 
 import com.amazonaws.services.sqs.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.traverse.storage.group.models.Message;
+
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.messaging.config.QueueMessageHandlerFactory;
@@ -25,7 +26,9 @@ public class SQSConfig {
 
     @Bean
     ObjectMapper objectMapper() {
-        return new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
     }
     @Primary
     @Bean

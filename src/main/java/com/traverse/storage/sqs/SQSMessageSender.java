@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @Component
 @Slf4j
@@ -26,12 +27,13 @@ public class SQSMessageSender {
     }
 
     public void sendMessage(Message message) {
-        log.info("Sending message to SQS. \n Message: {}", message);
+        log.info("Sending message to SQS.");
+        Random rand = new Random();
         try {
             Map<String, Object> headers = new HashMap<>();
             headers.put("contentType", "application/json");
             headers.put("message-group-id", "groupID");
-            headers.put("message-deduplication-id", "messageDeduplicationId");
+            headers.put("message-deduplication-id", Integer.toHexString(rand.nextInt()));
 
             template.convertAndSend(QUEUE_URL, message, headers);
         } catch(MessagingException e) {
