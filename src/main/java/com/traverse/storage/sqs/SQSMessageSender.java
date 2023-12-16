@@ -1,9 +1,9 @@
 package com.traverse.storage.sqs;
 
-import com.traverse.storage.models.Message;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.traverse.storage.models.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +32,7 @@ public class SQSMessageSender {
 
 
     public void sendMessage(@RequestBody Message message) {
-        log.info("Sending message to SQS. \n Message: {}", message.getMessage());
+        log.info("Sending message to SQS. \n Message: {}", message.getText());
         try {
             Random rand = new Random();
             String  jsonString = mapper.writeValueAsString(message);
@@ -43,7 +43,7 @@ public class SQSMessageSender {
                     .setHeader("message-group-id", "groupID")
                     .setHeader("message-deduplication-id", Integer.toHexString(rand.nextInt()))
                     .build());
-            log.info("Message sent successfully: " + message.getMessage());
+            log.info("Message sent successfully: " + message.getText());
         } catch(MessagingException e) {
             log.error("An error occurred when sending a message to SQS: {}", e.getMessage());
         } catch(Exception e) {

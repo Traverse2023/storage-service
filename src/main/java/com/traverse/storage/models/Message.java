@@ -14,10 +14,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Message {
     private String email;
-    private String author;
-    private String message;
-    private LocalDateTime dateTime;
-    private byte[] attachment;
+    private String firstName;
+    private String lastName;
+    private String text;
+    private LocalDateTime time;
+    //private byte[] attachment;
     private String groupId;
     private String channelName;
 }

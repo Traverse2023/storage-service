@@ -15,11 +15,6 @@ public class GroupController {
     @Autowired
     private GroupService groupService;
 
-    @GetMapping("/all")
-    public List<Group> getGroups() {
-        return groupService.getGroups();
-    }
-
     @PostMapping("/createGroup")
     public Group createGroup(@RequestBody String requestBody) {
         System.out.println("REQUEST BODY: " + requestBody);

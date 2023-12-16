@@ -13,4 +13,9 @@ public class Channel {
         this.name = name;
         this.messages = new ArrayList<Message>();
     }
+
+    public void addMsg(Message msg) {
+        this.messages.add(msg);
+    }
+
 }

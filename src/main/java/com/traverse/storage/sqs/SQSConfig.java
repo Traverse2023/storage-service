@@ -26,7 +26,6 @@ public class SQSConfig {
     @Bean
     ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
-
         mapper.registerModule(new JavaTimeModule());
         return mapper;
     }
