@@ -1,4 +1,4 @@
-package com.traverse.storage.sqs;
+package com.traverse.storage.utils.config;
 
 import com.amazonaws.services.sqs.*;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,4 +1,4 @@
-package com.traverse.storage.utils;
+package com.traverse.storage.utils.config;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
