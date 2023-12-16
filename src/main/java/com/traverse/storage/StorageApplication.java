@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.slf4j.Logger;
-
 import java.time.LocalDateTime;
 
 @SpringBootApplication
@@ -18,6 +17,7 @@ public class StorageApplication {
         LocalDateTime date = LocalDateTime.now();
         sender.sendMessage(new Message("Bryan Author", date , "Bryan's message sent."));
     }
+
     public static void main(String[] args) {
         SpringApplication.run(StorageApplication.class, args);
     }

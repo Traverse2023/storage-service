@@ -1,4 +1,3 @@
-
 package com.traverse.storage.sqs.controller;
 
 import com.traverse.storage.group.models.Message;
@@ -22,7 +21,7 @@ public class SQSMessageReceiver {
 //				message.getTime(), message.getAuthor(), message.getMessage());
 		log.info("Message received: {}", message);
 	}
-
 }
+
 
 
