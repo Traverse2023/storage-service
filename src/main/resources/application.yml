@@ -8,7 +8,6 @@ cloud:
     end_point:
       uri: https://sqs.us-east-1.amazonaws.com/616401808986/NotificationsFIFOQUEUE.fifo
 
-
 spring:
   data:
     mongodb:

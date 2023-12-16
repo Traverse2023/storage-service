@@ -9,8 +9,8 @@ public class Channel {
     private String name;
     private ArrayList<Message> messages;
 
-    public Channel(String name, ArrayList<Message> messages) {
+    public Channel(String name) {
         this.name = name;
-        this.messages = messages;
+        this.messages = new ArrayList<Message>();
     }
 }
