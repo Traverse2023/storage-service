@@ -6,7 +6,7 @@ cloud:
       access_key: AKIAY7BDJFZNMLZH7UEZ
       secret_key: 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
     end_point:
-      uri: https://sqs.us-east-1.amazonaws.com/616401808986/NotificationsFIFOQUEUE.fifo
+      uri: https://sqs.us-east-1.amazonaws.com/816867951976/MessaginQueue.fifo
 
 
 spring:
