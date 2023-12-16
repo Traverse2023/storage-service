@@ -2,8 +2,9 @@ package com.traverse.storage.sqs;
 
 import com.amazonaws.services.sqs.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.traverse.storage.group.models.Message;
-import lombok.extern.slf4j.Slf4j;
+
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.messaging.config.QueueMessageHandlerFactory;
 import org.springframework.cloud.aws.messaging.config.SimpleMessageListenerContainerFactory;
@@ -14,18 +15,19 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.handler.annotation.support.PayloadMethodArgumentResolver;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 
 @Configuration
-@Slf4j
+// @Slf4j
 public class SQSConfig {
     @Value("${cloud.aws.region.static}")
     private String region;
 
     @Bean
     ObjectMapper objectMapper() {
-        return new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
     }
     @Primary
     @Bean
@@ -56,7 +58,6 @@ public class SQSConfig {
         factory.setAmazonSqs(amazonSQS());
         MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
         messageConverter.setObjectMapper(objectMapper());
-//        messageConverter.setSerializedPayloadClass(Message.class);
         messageConverter.setStrictContentTypeMatch(false);
         factory.setArgumentResolvers(Collections.singletonList(new PayloadMethodArgumentResolver(messageConverter)));
         return factory;
