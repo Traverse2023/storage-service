@@ -25,13 +25,13 @@ public class NotificationController {
     public Notification createNotification(@RequestBody String requestBody) {
         System.out.println("REQUEST BODY: " + requestBody);
         JSONObject jsonBody = new JSONObject(requestBody);
-        String forEmail = jsonBody.getString("forEmail");
-        String eventType = jsonBody.getString("eventType");
-        String notificationMessage = jsonBody.getString("notificationMessage");
+        String recipientEmail = jsonBody.getString("recipientEmail");
+        String notificationType = jsonBody.getString("notificationType");
+        String notificationMessage = jsonBody.getString("message");
         Notification notif = Notification.builder()
-                .forEmail(forEmail)
-                .eventType(eventType)
-                .notificationMessage(notificationMessage)
+                .recipientEmail(recipientEmail)
+                .notificationType(notificationType)
+                .message(notificationMessage)
                 .build();
         return notificationService.addNotificationToDb(notif);
     }
@@ -41,9 +41,9 @@ public class NotificationController {
         return notificationService.getNotifications(forEmail);
     }
 
-    @SqsListener(value = "${cloud.aws.end_point.uri}", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
-    public void receiveMessageFromQueue(Notification notif) {
-        log.info("Receiving message from SQS...\n{}", notif.toString());
-        notificationService.addNotificationToDb(notif);
-    }
+//    @SqsListener(value = "${cloud.aws.end_point.uri}", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
+//    public void receiveMessageFromQueue(Notification notif) {
+//        log.info("Receiving message from SQS...\n{}", notif.toString());
+//        notificationService.addNotificationToDb(notif);
+//    }
 }

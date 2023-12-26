@@ -16,11 +16,12 @@ import java.time.LocalDateTime;
 public class Notification {
     @Id
     private String id;
-    private String forEmail;
-    private String eventType;
+    private String recipientEmail;
+    private String notificationType;
     private LocalDateTime time;
-    private String notificationMessage;
-    private String link;
+    private String message;
+    private String groupId;
+
 }
 
 
