@@ -23,9 +23,10 @@ public class MessageController {
         this.messageService = messageService;
     }
     
-    @GetMapping("/{groupId}/{channelName}")
-    public List<Message> getMessages(@PathVariable String groupId, @PathVariable String channelName) {
-        return messageService.getMessages(groupId, channelName);
+    @GetMapping("/{groupId}/{channelName}/{pageNumber}")
+    public List<Message> getMessages(@PathVariable String groupId, @PathVariable String channelName, @PathVariable int pageNumber) {
+        log.info("Getting messages...");
+        return messageService.getMessages(groupId, channelName, pageNumber);
     }
 
     @SqsListener(value = "${cloud.aws.end_point.uri}", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)

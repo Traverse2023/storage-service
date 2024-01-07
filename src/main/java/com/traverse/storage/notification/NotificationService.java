@@ -1,8 +1,12 @@
 package com.traverse.storage.notification;
 
+import com.traverse.storage.models.Channel;
+import com.traverse.storage.models.Group;
+import com.traverse.storage.models.Message;
 import com.traverse.storage.models.Notification;
 import com.traverse.storage.notification.NotificationRepository;
 
+import com.traverse.storage.utils.exceptions.mongo.MongoDBException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -34,7 +38,7 @@ public class NotificationService {
           List<Notification> x = mongoTemplate.find(query, Notification.class);
           return mongoTemplate.find(query, Notification.class);
       }
-//    public void saveMessage(Message message) {
+//    public void saveNotification(Message message) {
 //
 //        Optional<Group> groupDoc = repository.findById(message.getGroupId());
 //
@@ -60,13 +64,4 @@ public class NotificationService {
 //        mongoTemplate.updateFirst(query, update, Group.class);
 //    }
 
-//    public List<Message> getMessages(String groupId, String channelName) {
-//        Optional<Group> group = repository.findById(groupId);
-//        if(group.isPresent()) {
-//            Channel channel = group.get().getChannels().get(channelName);
-//            return channel.getMessages();
-//        }
-//        // TODO: Throw custom exception
-//        return null;
-//    }
 }

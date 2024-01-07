@@ -39,7 +39,6 @@ public class NotificationController {
     @GetMapping("/getNotifications/{forEmail}")
     public List<Notification> getNotifications(@PathVariable String forEmail) {
         return notificationService.getNotifications(forEmail);
-
     }
 
 //    @SqsListener(value = "${cloud.aws.end_point.uri}", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)

@@ -21,6 +21,7 @@ public class Message {
     //private byte[] attachment;
     private String groupId;
     private String channelName;
+    private String pfpURL;
 }
 
 /**
