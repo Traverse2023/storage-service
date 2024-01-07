@@ -21,6 +21,7 @@ public class Notification {
     private LocalDateTime time;
     private String message;
     private String groupId;
+    private String groupName;
 
 }
 

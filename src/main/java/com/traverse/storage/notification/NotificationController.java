@@ -25,13 +25,13 @@ public class NotificationController {
     public Notification createNotification(@RequestBody String requestBody) {
         System.out.println("REQUEST BODY: " + requestBody);
         JSONObject jsonBody = new JSONObject(requestBody);
-        String recipientEmail = jsonBody.getString("recipientEmail");
-        String notificationType = jsonBody.getString("notificationType");
-        String notificationMessage = jsonBody.getString("message");
+
         Notification notif = Notification.builder()
-                .recipientEmail(recipientEmail)
-                .notificationType(notificationType)
-                .message(notificationMessage)
+                .recipientEmail(jsonBody.getString("recipientEmail"))
+                .groupId(jsonBody.getString("groupId"))
+                .groupName(jsonBody.getString("groupName"))
+                .notificationType(jsonBody.getString("notificationType"))
+                .message(jsonBody.getString("message"))
                 .build();
         return notificationService.addNotificationToDb(notif);
     }
@@ -39,6 +39,7 @@ public class NotificationController {
     @GetMapping("/getNotifications/{forEmail}")
     public List<Notification> getNotifications(@PathVariable String forEmail) {
         return notificationService.getNotifications(forEmail);
+
     }
 
 //    @SqsListener(value = "${cloud.aws.end_point.uri}", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)

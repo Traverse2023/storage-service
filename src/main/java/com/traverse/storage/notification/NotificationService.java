@@ -30,7 +30,8 @@ public class NotificationService {
       }
       public List<Notification> getNotifications(String forEmail) {
           Query query = new Query();
-          query.addCriteria(Criteria.where("forEmail").is(forEmail));
+          query.addCriteria(Criteria.where("recipientEmail").is(forEmail));
+          List<Notification> x = mongoTemplate.find(query, Notification.class);
           return mongoTemplate.find(query, Notification.class);
       }
 //    public void saveMessage(Message message) {
