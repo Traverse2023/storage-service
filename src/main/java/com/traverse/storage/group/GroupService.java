@@ -18,11 +18,11 @@ import com.traverse.storage.group.GroupRepository;
 
 @Service
 public class GroupService {
-
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private GroupRepository groupRepository;
 
     public Group addGroup(String name) {
-        return mongoTemplate.insert(new Group(name));
+        return groupRepository.insert(new Group(name));
+        // TODO: exception handling
     }
 }

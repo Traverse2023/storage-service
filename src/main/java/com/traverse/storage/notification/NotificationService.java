@@ -33,6 +33,7 @@ public class NotificationService {
 
     public Notification createNotification(Notification notification) {
         return repository.insert(notification);
+        // TODO: Exception handling
     }
 
     public List<Notification> getNotificationsByPage(String recipientEmail, Pageable pageable) {

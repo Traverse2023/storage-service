@@ -2,6 +2,7 @@ package com.traverse.storage.notification;
 
 
 import com.traverse.storage.models.Notification;
+import com.traverse.storage.models.NotificationType;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +10,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @Slf4j
 @RequestMapping(path = "api/v1/notifications")
 public class NotificationController {
-
     @Autowired
     private NotificationService notificationService;
 
@@ -32,13 +33,14 @@ public class NotificationController {
 
         Notification notification = Notification.builder()
                 .recipient(jsonBody.getString("recipientEmail"))
-                .groupId(jsonBody.getString("groupId"))
-                .groupName(jsonBody.getString("groupName"))
-                .notificationType(jsonBody.getString("notificationType"))
+                .groupId(jsonBody.optString("groupId"))
+                .groupName(jsonBody.optString("groupName"))
+                .notificationType(NotificationType.fromString(jsonBody.getString("notificationType")))
                 .message(jsonBody.getString("message"))
+                .time(LocalDateTime.now())
+                .sender(jsonBody.optString("senderEmail"))
                 .build();
         return notificationService.createNotification(notification);
-        // TODO: Exception handling
     }
 
     /**
@@ -52,8 +54,6 @@ public class NotificationController {
     public List<Notification> getNotifications(@PathVariable String recipientEmail, @PathVariable int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber-1, 5);
         return notificationService.getNotificationsByPage(recipientEmail, pageable);
-
-        // TODO: Exception handling
     }
 
 }

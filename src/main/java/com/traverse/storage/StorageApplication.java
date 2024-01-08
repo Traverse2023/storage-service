@@ -17,22 +17,6 @@ import java.util.ArrayList;
 public class StorageApplication {
     Logger logger= LoggerFactory.getLogger(StorageApplication.class);
 
-    public StorageApplication(SQSMessageSender sender) {
-
-//        sender.sendMessage(Message.builder()
-//                    .text("This is bryan's message from spring.")
-//                    .email("briplomo@gmail.com")
-//                    .groupId("65728e07e51fdf72df913759")
-//                    .channelName("general")
-//                    .dateTime(LocalDateTime.now())
-//                    .attachment(new byte[1])
-//                    .author("Bryan")
-//                    .build()
-//        );
-
-
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(StorageApplication.class, args);
     }
