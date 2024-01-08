@@ -65,11 +65,6 @@
             <artifactId>spring-boot-autoconfigure</artifactId>
             <version>3.0.12</version>
         </dependency>
-        <!-- <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>5.3.10.RELEASE</version>
-        </dependency> -->
 	</dependencies>
 
 	<build>
@@ -86,6 +81,50 @@
 					<source>17</source>
 					<target>17</target>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.3.1</version>
+				<configuration>
+					<consoleOutput>true</consoleOutput>
+					<includeTestSourceDirectory>true</includeTestSourceDirectory>
+					<failOnViolation>true</failOnViolation>
+					<failsOnError>true</failsOnError>
+					<configLocation>checkstyle/checkstyle.xml</configLocation>
+					<suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>
+				</configuration>
+				<executions>
+					<execution>
+						<id>checkstyle</id>
+<!--						<phase>validate</phase>-->
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.10</version>
+<!--				<configuration>-->
+<!--					<output>true</output>-->
+<!--				</configuration>-->
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 	</plugins>
 	</build>
