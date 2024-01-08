@@ -7,7 +7,10 @@ import com.traverse.storage.models.Notification;
 import com.traverse.storage.notification.NotificationRepository;
 
 import com.traverse.storage.utils.exceptions.mongo.MongoDBException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -20,6 +23,7 @@ import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.where;
 
+@Slf4j
 @Service
 public class NotificationService {
 
@@ -29,39 +33,24 @@ public class NotificationService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-      public Notification addNotificationToDb(Notification notification) {
-          return repository.insert(notification);
-      }
-      public List<Notification> getNotifications(String forEmail) {
-          Query query = new Query();
-          query.addCriteria(Criteria.where("recipientEmail").is(forEmail));
-          List<Notification> x = mongoTemplate.find(query, Notification.class);
-          return mongoTemplate.find(query, Notification.class);
-      }
-//    public void saveNotification(Message message) {
+    public Notification createNotification(Notification notification) {
+        return repository.insert(notification);
+    }
+//    public List<Notification> getNotificationsByPage(String recipientEmail, Pageable pageable) {
+//          Query query = new Query();
+//          query.with(pageable);
+//          log.info(recipientEmail);
+//          query.addCriteria(Criteria.where("recipient").is(recipientEmail));
+//          List<Notification> notifications = mongoTemplate.find(query, Notification.class);
+//          log.info("Notifications for recipient ${} : ${}", recipientEmail, notifications);
+//          return notifications;
 //
-//        Optional<Group> groupDoc = repository.findById(message.getGroupId());
-//
-//        if (groupDoc.isPresent()) {
-//            Group group = groupDoc.get();
-//
-//            // Update the specific field in the map
-//            Channel channel = group.getChannels().get(message.getChannelName());
-//            channel.addMsg(message);
-//
-//            // Save the updated document
-//            repository.save(group);
-//        } else {
-//            // Handle the case where the document with the given ID is not found
-//            // You may throw an exception, log a message, etc.
-//        }
-//    }
-
-//        Query query = new Query();
-//        query.addCriteria(Criteria.where("_id").is(message.getGroupId())
-//                .and("name").is(message.getChannelName()));
-//        Update update = new Update().push("messages", message);
-//        mongoTemplate.updateFirst(query, update, Group.class);
-//    }
-
+//          // TODO: Exception handling
+//      }
+    public List<Notification> getNotificationsByPage(String recipientEmail, Pageable pageable) {
+        Page<Notification> notifications = repository.findByRecipient(recipientEmail, pageable);
+        log.info("Notifications for recipient {} : {}", recipientEmail, notifications.getContent());
+        return notifications.getContent();
+        // TODO: Exception handling
+    }
 }
