@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Notification {
     @Id
     private String id;
-    private String recipientEmail;
+    private String recipient;
     private String notificationType;
     private LocalDateTime time;
     private String message;
