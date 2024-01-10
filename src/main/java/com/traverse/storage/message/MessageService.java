@@ -54,8 +54,8 @@ public class MessageService {
 
     // Retrieve paginated messages for specified group-channel
     public List<Message> getMessages(String groupId, String channelName, int pageNum) {
-        Pageable pageable = PageRequest.of(pageNum,5);
-        List<Group> groupDocument = repository.findGroupMessages(groupId, channelName, pageable.getPageSize()*(pageable.getPageNumber()-1), pageable.getPageSize());
+        Pageable pageable = PageRequest.of(pageNum, 5);
+        List<Group> groupDocument = repository.findGroupMessages(groupId, channelName, pageable.getPageSize() * (pageable.getPageNumber() - 1), pageable.getPageSize());
         log.info(groupDocument.toString());
         List<Message> messages = groupDocument.get(0).getChannels().get(channelName).getMessages();
         log.info("Retrieved messages: ${}", messages);

@@ -23,7 +23,6 @@ public class Notification {
     private String groupId;
     private String groupName;
     private String sender;
-
 }
 
 

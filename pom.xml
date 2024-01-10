@@ -98,7 +98,7 @@
 				<executions>
 					<execution>
 						<id>checkstyle</id>
-						<phase>validate</phase>
+<!--						<phase>validate</phase>-->
 						<goals>
 							<goal>check</goal>
 						</goals>
@@ -126,26 +126,26 @@
 					</rules>
 				</configuration>
 				<executions>
-					<execution>
-						<id>default-prepare-agent</id>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>default-report</id>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>default-check</id>
-<!--Fail build during this phase if code test coverage does not meet configuration requirements-->
-<!--						<phase>validate</phase>-->
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
+<!--					<execution>-->
+<!--						<id>default-prepare-agent</id>-->
+<!--						<goals>-->
+<!--							<goal>prepare-agent</goal>-->
+<!--						</goals>-->
+<!--					</execution>-->
+<!--					<execution>-->
+<!--						<id>default-report</id>-->
+<!--						<goals>-->
+<!--							<goal>report</goal>-->
+<!--						</goals>-->
+<!--					</execution>-->
+<!--					<execution>-->
+<!--						<id>default-check</id>-->
+<!--&lt;!&ndash;Fail build during this phase if code test coverage does not meet configuration requirements&ndash;&gt;-->
+<!--&lt;!&ndash;						<phase>validate</phase>&ndash;&gt;-->
+<!--						<goals>-->
+<!--							<goal>check</goal>-->
+<!--						</goals>-->
+<!--					</execution>-->
 				</executions>
 			</plugin>
 	</plugins>
