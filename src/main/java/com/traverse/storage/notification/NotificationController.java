@@ -56,4 +56,14 @@ public class NotificationController {
         return notificationService.getNotificationsByPage(recipientEmail, pageable);
     }
 
+    /**
+     *
+     * @param notificationId The database id of the notification to be deleted
+     * @return The notification that was deleted if it was deleted successfully
+     * */
+    @DeleteMapping("/deleteNotification/{notificationId}")
+    public Notification deleteNotification(@PathVariable String notificationId) {
+        return notificationService.deleteNotification(notificationId);
+    }
+
 }

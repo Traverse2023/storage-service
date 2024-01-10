@@ -42,4 +42,9 @@ public class NotificationService {
         return notifications.getContent();
         // TODO: Exception handling
     }
+
+    public Notification deleteNotification(String id) {
+        Notification notification = repository.deleteNotificationById(id);
+        log.info("Successfully deleted notification: {}\n{}", notification.getId(), notification.getMessage())
+    }
 }
