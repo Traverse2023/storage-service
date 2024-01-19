@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
@@ -33,7 +34,7 @@ public class MessageService {
     public void saveMessage(Message message) {
 
         Optional<Group> groupDoc = repository.findById(message.getGroupId());
-
+        message.setId(String.valueOf(UUID.randomUUID()));
         if (groupDoc.isPresent()) {
             Group group = groupDoc.get();
 
@@ -54,7 +55,7 @@ public class MessageService {
 
     // Retrieve paginated messages for specified group-channel
     public List<Message> getMessages(String groupId, String channelName, int pageNum) {
-        Pageable pageable = PageRequest.of(pageNum, 5);
+        Pageable pageable = PageRequest.of(pageNum, 30);
         List<Group> groupDocument = repository.findGroupMessages(groupId, channelName, pageable.getPageSize() * (pageable.getPageNumber() - 1), pageable.getPageSize());
         log.info(groupDocument.toString());
         List<Message> messages = groupDocument.get(0).getChannels().get(channelName).getMessages();
