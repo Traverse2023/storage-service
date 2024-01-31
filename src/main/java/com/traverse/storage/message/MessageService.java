@@ -4,20 +4,18 @@ import com.traverse.storage.group.GroupRepository;
 import com.traverse.storage.models.Channel;
 import com.traverse.storage.models.Group;
 import com.traverse.storage.models.Message;
+import com.traverse.storage.models.MessagesResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
-import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+
+import java.util.*;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
@@ -32,7 +30,7 @@ public class MessageService {
     @Autowired
     private MongoTemplate mongoTemplate;
     public void saveMessage(Message message) {
-
+        // TODO: Optimize Mongo operation
         Optional<Group> groupDoc = repository.findById(message.getGroupId());
         message.setId(String.valueOf(UUID.randomUUID()));
         if (groupDoc.isPresent()) {
@@ -41,6 +39,8 @@ public class MessageService {
             // Update the specific field in the map
             Channel channel = group.getChannels().get(message.getChannelName());
             channel.addMsg(message);
+            // Update message count
+            channel.setMessageCount(channel.getMessageCount() + 1);
 
             // Save the updated document
             repository.save(group);
@@ -52,17 +52,19 @@ public class MessageService {
     }
 
 
-
     // Retrieve paginated messages for specified group-channel
-    public List<Message> getMessages(String groupId, String channelName, int pageNum) {
-        Pageable pageable = PageRequest.of(pageNum, 30);
-        List<Group> groupDocument = repository.findGroupMessages(groupId, channelName, pageable.getPageSize() * (pageable.getPageNumber() - 1), pageable.getPageSize());
-        log.info(groupDocument.toString());
-        List<Message> messages = groupDocument.get(0).getChannels().get(channelName).getMessages();
-        log.info("Retrieved messages: ${}", messages);
-        return messages;
+    public MessagesResponse getMessages(String groupId, String channelName, int pageNum) {
+        Pageable pageable = PageRequest.of(pageNum, 10);
+        Channel channel = repository.findGroupMessages(
+                groupId, channelName, pageable.getPageSize() * (pageable.getPageNumber() - 1), pageable.getPageSize())
+                .get(0).getChannels().get(channelName);
+        log.info(channel.toString());
+        long messageCount = channel.getMessageCount();
+        List<Message> messages = channel.getMessages();
+        Collections.reverse(messages);
+        log.info("Retrieved messages: {}. Message count {}", messages, messageCount);
+        return new MessagesResponse(messageCount, messages);
         // TODO: implement exception handling and edge cases
     }
-
 
 }

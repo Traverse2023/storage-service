@@ -4,6 +4,7 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 
@@ -18,9 +19,12 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
         return "Traverse";
     }
 
+    @Value("${spring.data.mongodb.uri}")
+    private String MONGO_URI;
+
     @Override
     public MongoClient mongoClient() {
-        ConnectionString connectionString = new ConnectionString("mongodb+srv://fm1539:fMDhvPfP922X8rXN@traversecluster.fk3mwfb.mongodb.net/?retryWrites=true&w=majority");
+        ConnectionString connectionString = new ConnectionString(MONGO_URI);
         MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
                 .applyConnectionString(connectionString)
                 .build();
@@ -29,7 +33,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     }
 
     @Override
-    public Collection getMappingBasePackages() {
+    public Collection<String> getMappingBasePackages() {
         return Collections.singleton("com.traverse.storage.group.models.Group");
     }
 }

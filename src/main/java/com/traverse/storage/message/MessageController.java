@@ -1,5 +1,6 @@
 package com.traverse.storage.message;
 
+import com.traverse.storage.models.MessagesResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
@@ -26,7 +27,7 @@ public class MessageController {
     }
     
     @GetMapping("/{groupId}/{channelName}/{pageNumber}")
-    public List<Message> getMessages(@PathVariable String groupId, @PathVariable String channelName, @PathVariable int pageNumber) {
+    public MessagesResponse getMessages(@PathVariable String groupId, @PathVariable String channelName, @PathVariable int pageNumber) {
         log.info("Getting messages...");
         return messageService.getMessages(groupId, channelName, pageNumber);
     }
