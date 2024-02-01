@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.traverse.storage.models.Message;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 
 @RestController
 @Slf4j
@@ -40,7 +42,7 @@ public class MessageController {
         message.setText(jsonBody.getString("text"));
         message.setFirstName(jsonBody.getString("firstName"));
         message.setLastName(jsonBody.getString("lastName"));
-//        message.setTime(LocalDateTime.parse(jsonBody.getString("time")));
+        message.setTime(LocalDateTime.now());
         message.setGroupId(jsonBody.getString("groupId"));
         message.setChannelName(jsonBody.getString("channelName"));
         messageService.saveMessage(message);

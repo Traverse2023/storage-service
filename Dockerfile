@@ -1,4 +1,4 @@
-FROM maven:3.9.6-amazoncorretto-17-al2023 AS MAVEN_BUILD
+FROM maven:3.9.6-eclipse-temurin-17-alpine AS MAVEN_BUILD
 
 RUN mkdir /storage-service
 

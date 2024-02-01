@@ -23,10 +23,9 @@ public class Message {
     private String text;
     private LocalDateTime time;
     private String pfpURL;
-    //private byte[] attachment;
     private String groupId;
     private String channelName;
-    private String pfpURL;
+
 }
 
 /**
