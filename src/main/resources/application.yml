@@ -8,10 +8,19 @@ cloud:
     end_point:
       uri: https://sqs.us-east-1.amazonaws.com/816867951976/MessaginQueue.fifo
 
-spring:
-  data:
-    mongodb:
-      uri: mongodb+srv://fm1539:fMDhvPfP922X8rXN@traversecluster.fk3mwfb.mongodb.net/?retryWrites=true&w=majority
-      database: Traverse
-  main:
-    allow-bean-definition-overriding: true
+dev:
+  spring:
+    data:
+      mongodb:
+        uri: mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.1.1
+        database: Traverse
+    main:
+      allow-bean-definition-overriding: true
+prod:
+  spring:
+    data:
+      mongodb:
+        uri: mongodb+srv://fm1539:fMDhvPfP922X8rXN@traversecluster.fk3mwfb.mongodb.net/?retryWrites=true&w=majority
+        database: Traverse
+    main:
+      allow-bean-definition-overriding: true
