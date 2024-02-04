@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  mongodb:
+    container_name: mongodb
+    image: mongodb/mongodb-community-server
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
