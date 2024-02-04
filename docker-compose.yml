@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  mongodb:
+    container_name: mongodb
+    image: mongodb/mongodb-community-server
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+
+  storage-service:
+    build: ../storage-service
+    ports:
+      - 8080:8080
+    container_name: storage-service
+    environment:
+      MONGO_URL: mongodb://mongodb/mongodb_data
+    depends_on:
+      mongodb:
+        condition: service_started
+
+volumes:
+  mongodb_data:

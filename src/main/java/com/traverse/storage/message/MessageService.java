@@ -4,19 +4,17 @@ import com.traverse.storage.group.GroupRepository;
 import com.traverse.storage.models.Channel;
 import com.traverse.storage.models.Group;
 import com.traverse.storage.models.Message;
+import com.traverse.storage.models.MessagesResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
-import static com.mongodb.client.model.Filters.where;
-
+@Slf4j
 @Service
 public class MessageService {
 
@@ -26,38 +24,41 @@ public class MessageService {
     @Autowired
     private MongoTemplate mongoTemplate;
     public void saveMessage(Message message) {
-
+        // TODO: Optimize Mongo operation
         Optional<Group> groupDoc = repository.findById(message.getGroupId());
-
+        message.setId(String.valueOf(UUID.randomUUID()));
         if (groupDoc.isPresent()) {
             Group group = groupDoc.get();
 
             // Update the specific field in the map
             Channel channel = group.getChannels().get(message.getChannelName());
             channel.addMsg(message);
+            // Update message count
+            channel.setMessageCount(channel.getMessageCount() + 1);
 
             // Save the updated document
             repository.save(group);
         } else {
+            // TODO: Errors
             // Handle the case where the document with the given ID is not found
             // You may throw an exception, log a message, etc.
         }
     }
 
-//        Query query = new Query();
-//        query.addCriteria(Criteria.where("_id").is(message.getGroupId())
-//                .and("name").is(message.getChannelName()));
-//        Update update = new Update().push("messages", message);
-//        mongoTemplate.updateFirst(query, update, Group.class);
-//    }
 
-    public List<Message> getMessages(String groupId, String channelName) {
-        Optional<Group> group = repository.findById(groupId);
-        if(group.isPresent()) {
-            Channel channel = group.get().getChannels().get(channelName);
-            return channel.getMessages();
-        }
-        // TODO: Throw custom exception
-        return null;
+    // Retrieve paginated messages for specified group-channel
+    public MessagesResponse getMessages(String groupId, String channelName, int pageNum) {
+        Pageable pageable = PageRequest.of(pageNum, 10);
+        Channel channel = repository.findGroupMessages(
+                groupId, channelName, pageable.getPageSize() * (pageable.getPageNumber() - 1), pageable.getPageSize())
+                .get(0).getChannels().get(channelName);
+        log.info(channel.toString());
+        long messageCount = channel.getMessageCount();
+        List<Message> messages = channel.getMessages();
+        Collections.reverse(messages);
+        log.info("Retrieved messages: {}. Message count {}", messages, messageCount);
+        return new MessagesResponse(messageCount, messages);
+        // TODO: implement exception handling and edge cases
     }
+
 }

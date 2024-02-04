@@ -1,20 +1,17 @@
 package com.traverse.storage.message;
 
+import com.traverse.storage.models.MessagesResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
-import org.springframework.cloud.aws.messaging.listener.SqsMessageDeletionPolicy;
-import org.springframework.cloud.aws.messaging.listener.annotation.SqsListener;
-import org.springframework.web.bind.annotation.*;
 import com.traverse.storage.models.Message;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
+
 
 @RestController
 @Slf4j
-@EnableSqs
 @RequestMapping(path = "api/v1/messages")
 public class MessageController {
 
@@ -25,9 +22,10 @@ public class MessageController {
         this.messageService = messageService;
     }
     
-    @GetMapping("/{groupId}/{channelName}")
-    public List<Message> getMessages(@PathVariable String groupId, @PathVariable String channelName) {
-        return messageService.getMessages(groupId, channelName);
+    @GetMapping("/{groupId}/{channelName}/{pageNumber}")
+    public MessagesResponse getMessages(@PathVariable String groupId, @PathVariable String channelName, @PathVariable int pageNumber) {
+        log.info("Getting messages...");
+        return messageService.getMessages(groupId, channelName, pageNumber);
     }
 
 //    @SqsListener(value = "${cloud.aws.end_point.uri}", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
@@ -44,7 +42,7 @@ public class MessageController {
         message.setText(jsonBody.getString("text"));
         message.setFirstName(jsonBody.getString("firstName"));
         message.setLastName(jsonBody.getString("lastName"));
-//        message.setTime(LocalDateTime.parse(jsonBody.getString("time")));
+        message.setTime(LocalDateTime.now());
         message.setGroupId(jsonBody.getString("groupId"));
         message.setChannelName(jsonBody.getString("channelName"));
         messageService.saveMessage(message);
