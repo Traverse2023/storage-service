@@ -7,13 +7,15 @@ import com.mongodb.client.MongoClients;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collection;
 import java.util.Collections;
 
 @Configuration
 public class MongoConfig extends AbstractMongoClientConfiguration {
-
+    @Value("${dev.spring.data.mongodb.uri}")
+    private String URI;
     @Override
     protected String getDatabaseName() {
         return "Traverse";
@@ -25,6 +27,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     @Override
     public MongoClient mongoClient() {
         ConnectionString connectionString = new ConnectionString(MONGO_URI);
+
         MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
                 .applyConnectionString(connectionString)
                 .build();
