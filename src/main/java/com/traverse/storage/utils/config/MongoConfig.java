@@ -14,7 +14,7 @@ import java.util.Collections;
 
 @Configuration
 public class MongoConfig extends AbstractMongoClientConfiguration {
-    @Value("${dev.spring.data.mongodb.uri}")
+    @Value("${spring.data.mongodb.uri}")
     private String URI;
     @Override
     protected String getDatabaseName() {
