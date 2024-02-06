@@ -7,6 +7,7 @@ WORKDIR /storage-service
 COPY . /storage-service
 
 
+
 RUN mvn clean install
 
 FROM openjdk:17-jdk-slim
