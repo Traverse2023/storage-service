@@ -1,22 +1,38 @@
 version: 0.2
 
 phases:
-  install:
-    runtime-versions:
-      java: corretto17
+  pre-build:
+    commands:
+      - cd ./storage-service
+      - echo Logging into amazon ecr...
+      - echo aws --version
+      - $(aws ecr get-login-password --region $AWS_DEFAULT_REGION --no-include-email)
+      - REPOSITORY_URI=159452754321.dkr.ecr.us-east-1.amazonaws.com/storage-service
+      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
   build:
     commands:
       - echo Build started on `date`
-      - mvn spring-boot:build-image
+      - echo Building jar file...
       - mvn clean install
-      - mv target/*.jar storage-0.0.1-SNAPSHOT.jar
+      - echo Building docker image...
+      - docker build -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
-      - echo Build completed
+      - echo Build completed on `date`
+      - echo Pushing image to repo $REPOSITORY_URI...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo writing imagedefinitions file...
+      - DOCKER_CONTAINER_NAME=storage-service
+      - printf '[{"name":"%s", "imageUri": "%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - echo $DOCKER_CONTAINER_NAME
+      - echo printing imagedefinitions.json
+      - cat imagedefinitions.json
 artifacts:
   files:
-    - storage-0.0.1-SNAPSHOT.jar
-    - appspec.yml
+    - imagedefinitions.json
+    - target/storage-service-*.jar
 
 
 

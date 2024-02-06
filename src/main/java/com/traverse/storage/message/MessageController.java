@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Slf4j
 @RequestMapping(path = "api/v1/messages")
 public class MessageController {
-
     private final MessageService messageService;
 
     @Autowired
