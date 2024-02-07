@@ -15,7 +15,7 @@ phases:
       - echo Building jar file...
       - mvn clean install
       - echo Building docker image...
-      - docker-compose config | docker build -t $REPOSITORY_URI:latest .
+      - docker-compose up -d -t $REPOSITORY_URI:latest .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
