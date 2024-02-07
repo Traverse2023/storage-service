@@ -6,8 +6,8 @@ phases:
       - cd ./storage-service
       - echo Logging into amazon ecr...
       - echo aws --version
-      - $(aws ecr get-login-password --region $AWS_DEFAULT_REGION --no-include-email)
-      - REPOSITORY_URI=159452754321.dkr.ecr.us-east-1.amazonaws.com/storage-service
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 159452754321.dkr.ecr.us-east-1.amazonaws.com
+      - REPOSITORY_URI=159452754321.dkr.ecr.us-east-1.amazonaws.com/storage-service-ecr
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
   build:
     commands:
@@ -15,7 +15,7 @@ phases:
       - echo Building jar file...
       - mvn clean install
       - echo Building docker image...
-      - docker build -t $REPOSITORY_URI:latest .
+      - docker-compose build -t $REPOSITORY_URI:latest .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
@@ -24,7 +24,7 @@ phases:
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo writing imagedefinitions file...
-      - DOCKER_CONTAINER_NAME=storage-service
+      - DOCKER_CONTAINER_NAME=storage-service-container
       - printf '[{"name":"%s", "imageUri": "%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - echo $DOCKER_CONTAINER_NAME
       - echo printing imagedefinitions.json
