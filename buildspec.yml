@@ -26,7 +26,7 @@ phases:
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Writing imagedefinitions file...
-      - DOCKER_CONTAINER_NAME=storage-service-container
+      - DOCKER_CONTAINER_NAME="storage-service-container"
       - printf '[{"name":"%s", "imageUri": "%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - echo $DOCKER_CONTAINER_NAME
       - echo Printing imagedefinitions.json
