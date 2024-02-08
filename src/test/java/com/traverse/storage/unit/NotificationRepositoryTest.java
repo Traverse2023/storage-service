@@ -1,4 +1,4 @@
-package com.traverse.storage;
+package com.traverse.storage.unit;
 
 public class NotificationRepositoryTest {
 }

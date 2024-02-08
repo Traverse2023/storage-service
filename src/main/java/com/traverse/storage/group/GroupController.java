@@ -22,5 +22,7 @@ public final class GroupController {
         JSONObject jsonBody = new JSONObject(requestBody);
         String groupName = jsonBody.getString("groupName");
         return groupService.addGroup(groupName);
+
+        // TODO: communicate exceptions
     }
 }

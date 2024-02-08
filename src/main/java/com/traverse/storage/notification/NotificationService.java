@@ -47,5 +47,6 @@ public class NotificationService {
         Notification notification = repository.deleteNotificationById(id);
         log.info("Successfully deleted notification: {}\n{}", notification.getId(), notification.getMessage());
         return notification;
+        // TODO: Exception handling
     }
 }

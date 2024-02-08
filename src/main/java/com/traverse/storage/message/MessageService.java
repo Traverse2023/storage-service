@@ -24,7 +24,8 @@ public class MessageService {
     @Autowired
     private MongoTemplate mongoTemplate;
     public void saveMessage(Message message) {
-        // TODO: Optimize Mongo operation
+        // TODO: Optimize Mongo operation to not pull into memory entire group doc.
+        //  Return Message object created only to be used in editing and deletion for front end
         Optional<Group> groupDoc = repository.findById(message.getGroupId());
         message.setId(String.valueOf(UUID.randomUUID()));
         if (groupDoc.isPresent()) {
@@ -39,9 +40,7 @@ public class MessageService {
             // Save the updated document
             repository.save(group);
         } else {
-            // TODO: Errors
-            // Handle the case where the document with the given ID is not found
-            // You may throw an exception, log a message, etc.
+            // TODO: Exception handling
         }
     }
 

@@ -24,6 +24,7 @@ public enum NotificationType {
                 return type;
             }
         }
+        // TODO: Exception handling
         throw new ParseException("Unable to parse string into a valid NotificationType: ." + text);
     }
 }

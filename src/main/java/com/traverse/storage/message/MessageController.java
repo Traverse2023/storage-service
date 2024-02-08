@@ -25,6 +25,7 @@ public class MessageController {
     public MessagesResponse getMessages(@PathVariable String groupId, @PathVariable String channelName, @PathVariable int pageNumber) {
         log.info("Getting messages...");
         return messageService.getMessages(groupId, channelName, pageNumber);
+        // TODO: communicate exceptions
     }
 
 //    @SqsListener(value = "${cloud.aws.end_point.uri}", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
@@ -45,5 +46,6 @@ public class MessageController {
         message.setGroupId(jsonBody.getString("groupId"));
         message.setChannelName(jsonBody.getString("channelName"));
         messageService.saveMessage(message);
+        // TODO: communicate exceptions
     }
 }

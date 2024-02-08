@@ -41,6 +41,7 @@ public class NotificationController {
                 .sender(jsonBody.optString("senderEmail"))
                 .build();
         return notificationService.createNotification(notification);
+        // TODO: communicate exceptions
     }
 
     /**
@@ -54,6 +55,7 @@ public class NotificationController {
     public List<Notification> getNotifications(@PathVariable String recipientEmail, @PathVariable int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber - 1, 5);
         return notificationService.getNotificationsByPage(recipientEmail, pageable);
+        // TODO: communicate exceptions
     }
 
     /**
@@ -64,6 +66,7 @@ public class NotificationController {
     @DeleteMapping("/deleteNotification/{notificationId}")
     public Notification deleteNotification(@PathVariable String notificationId) {
         return notificationService.deleteNotification(notificationId);
+        // TODO: communicate exceptions
     }
 
 }
