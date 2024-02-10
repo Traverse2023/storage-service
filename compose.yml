@@ -1,4 +1,4 @@
-version: "3.8"
+
 services:
   mongodb:
     container_name: mongodb
@@ -15,10 +15,17 @@ services:
       - 8080:8080
     container_name: storage-service
     environment:
-      MONGO_URL: mongodb://mongodb/mongodb_data
+      MONGO_URL: mongodb://127.0.0.1/mongodb_data
     depends_on:
       mongodb:
         condition: service_started
+    develop:
+      watch:
+        - action: rebuild
+          path: ./storage-service/pom.xml
+        - action: sync
+          path: ./storage-service
+          target: /storage-service
 
 volumes:
   mongodb_data:
