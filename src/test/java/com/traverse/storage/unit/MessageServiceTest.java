@@ -25,5 +25,11 @@ public class MessageServiceTest {
     }
 
     @Test
-    public void
+    public void getMessagesReturnsGroupMessages() {
+
+    }
+
+    @Test void getMessagesExceptionThrowsMessagesNotFoundException() {
+
+    }
 }

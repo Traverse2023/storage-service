@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   mongodb:
     container_name: mongodb
@@ -19,6 +18,13 @@ services:
     depends_on:
       mongodb:
         condition: service_started
+    develop:
+      watch:
+        - action: rebuild
+          path: ./storage-service/pom.xml
+        - action: sync
+          path: ./storage-service
+          target: /storage-service
 
 volumes:
   mongodb_data:
