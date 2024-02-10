@@ -1,0 +1,30 @@
+services:
+  mongodb:
+    container_name: mongodb
+    image: mongodb/mongodb-community-server
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+
+  storage-service:
+    platform: linux/x86_64
+    container_name: storage-service
+    build: .
+    ports:
+      - 8080:8080
+    command: mvn spring-boot:run
+    environment:
+      MONGO_URL: mongodb://localhost/mongodb_data
+    depends_on:
+      - mongodb
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+        - action: sync
+          path: .
+          target: /storage-service
+
+volumes:
+  mongodb_data:
