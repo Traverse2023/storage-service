@@ -6,8 +6,6 @@ import com.traverse.storage.models.Channel;
 import com.traverse.storage.models.Group;
 import com.traverse.storage.models.Message;
 import com.traverse.storage.utils.exceptions.mongo.GroupCreationException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,20 +30,17 @@ public class GroupServiceTest {
     @InjectMocks
     private GroupService groupService;
     private final String groupName = "groupName";
-    private List<Message> messageList;
-    private Channel channel;
-    private Map<String, Channel> channels;
     private Group group;
 
     @BeforeEach
     void init() {
-        messageList = new ArrayList<>();
-        channel = Channel.builder()
+        List<Message> messageList = new ArrayList<>();
+        Channel channel = Channel.builder()
                 .name("general")
                 .messageCount(1)
                 .messages(messageList)
                 .build();
-        channels = new HashMap<>();
+        Map<String, Channel> channels = new HashMap<>();
         channels.put("general", channel);
 
         group = Group.builder()
