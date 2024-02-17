@@ -5,12 +5,13 @@ import com.traverse.storage.models.Channel;
 import com.traverse.storage.models.Group;
 import com.traverse.storage.models.Message;
 import com.traverse.storage.models.MessagesResponse;
-import com.traverse.storage.utils.exceptions.mongo.MessageCreationException;
-import com.traverse.storage.utils.exceptions.mongo.MessagesNotFoundException;
+import com.traverse.storage.utils.exceptions.MessageCreationException;
+import com.traverse.storage.utils.exceptions.MessagesNotFoundException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -66,10 +67,12 @@ public class MessageService {
         long messageCount = channel.getMessageCount();
         List<Message> messages = channel.getMessages();
         Collections.reverse(messages);
-        log.info("Retrieved messages: {}. Message count {}", messages, messageCount);
+        log.info("Retrieved messages: {}. Message count {}.", messages, messageCount);
         return new MessagesResponse(messageCount, messages);
         } catch (Exception e) {
-            throw new MessagesNotFoundException(e.getMessage());
+            final String message = String.format("Unable to get messages for group: %s and channel: %s. %s", groupId, channelName, e.getMessage());
+            log.info(message);
+            throw new MessagesNotFoundException(message);
         }
     }
 

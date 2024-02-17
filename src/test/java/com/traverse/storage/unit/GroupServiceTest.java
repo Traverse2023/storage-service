@@ -5,7 +5,7 @@ import com.traverse.storage.group.GroupService;
 import com.traverse.storage.models.Channel;
 import com.traverse.storage.models.Group;
 import com.traverse.storage.models.Message;
-import com.traverse.storage.utils.exceptions.mongo.GroupCreationException;
+import com.traverse.storage.utils.exceptions.GroupCreationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

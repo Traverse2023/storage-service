@@ -4,11 +4,10 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.traverse.storage.utils.exceptions.mongo.MongoConfigException;
+import com.traverse.storage.utils.exceptions.ConfigException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -35,7 +34,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
                     .build();
             return MongoClients.create(mongoClientSettings);
         } catch (Exception e) {
-            throw new MongoConfigException(e.getMessage());
+            throw new ConfigException(e.getMessage());
         }
     }
 
