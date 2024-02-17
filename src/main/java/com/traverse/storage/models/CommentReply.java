@@ -1,4 +1,5 @@
 package com.traverse.storage.models;
+
 import org.springframework.data.annotation.Id;
 
 import lombok.AllArgsConstructor;
@@ -10,8 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Comment {
+public class CommentReply {
     @Id
-    private String commentID;
+    private String replyID;
+    private String userID;
     private String content;
 }

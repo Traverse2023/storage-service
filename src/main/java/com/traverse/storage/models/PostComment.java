@@ -1,24 +1,21 @@
 package com.traverse.storage.models;
+import org.springframework.data.annotation.Id;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.List;
 
-import org.springframework.data.annotation.Id;
+import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Post {
+public class PostComment {
     @Id
-    private String postID;
+    private String commentID;
     private String userID;
-    private String postName;
     private String content;
-    private int upvotes;
-    private int downvotes;
-    private List<PostComment> comments;
+    private List<CommentReply> replies;
 }
