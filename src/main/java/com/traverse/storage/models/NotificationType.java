@@ -3,10 +3,11 @@ package com.traverse.storage.models;
 import org.apache.http.ParseException;
 
 public enum NotificationType {
-    FriendRequest("friendRequest"),
-    ChannelMessage("channelMessage"),
-    AdminMessage("adminMessage"),
-    DirectMessage("directMessage");
+//    FriendRequest("friendRequest"),
+//    ChannelMessage("channelMessage"),
+//    AdminMessage("adminMessage"),
+//    DirectMessage("directMessage");
+    MessageSent("messageSent");
 
     private final String text;
 

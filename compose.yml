@@ -8,7 +8,6 @@ services:
       - mongodb_data:/data/db
 
   storage-service:
-    platform: linux/x86_64
     container_name: storage-service
     build: .
     ports:
