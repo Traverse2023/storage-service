@@ -13,5 +13,5 @@ spring:
     allow-bean-definition-overriding: true
   data:
     mongodb:
-      uri: mongodb://localhost/mongodb_data
+      uri: ${MONGO_URL}
 
