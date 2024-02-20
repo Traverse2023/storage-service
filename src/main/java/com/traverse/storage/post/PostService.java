@@ -15,9 +15,4 @@ public class PostService {
 
     }
 
-    public Post getPost(Post post) {
-        // TODO: Exception handling
-
-    }
-
 }
