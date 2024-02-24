@@ -15,15 +15,17 @@ services:
       - 8080:8080
     command: mvn spring-boot:run
     environment:
-      MONGO_URL: mongodb://localhost/mongodb_data
+      MONGO_URL: mongodb://127.0.0.1/mongodb_data
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_started
     develop:
       watch:
         - action: rebuild
-          path: .
+          path: ./storage-service/pom.xml
         - action: sync
-          path: .
+          path: ./storage-service
+
           target: /storage-service
 
 volumes:
