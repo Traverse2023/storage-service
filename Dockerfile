@@ -1,27 +1,17 @@
-FROM maven:3.9.6-eclipse-temurin-17-alpine AS base
+FROM maven:3.9.6-eclipse-temurin-17-alpine AS MAVEN_BUILD
 
-WORKDIR /app
+RUN mkdir /storage-service
 
-COPY pom.xml /app
+WORKDIR /storage-service
 
-RUN mvn dependency:resolve
+COPY . /storage-service
 
-COPY . /app
-
-
-FROM base as prod_build
-
-RUN mvn clean
-
-RUN mvn package -DskipTests -X
-
+RUN mvn clean install
 
 FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY --from=prod_build /storage-service/target/storage-service-*.jar /app
+COPY --from=MAVEN_BUILD /storage-service/target/storage-service-*.jar /app
 
 RUN ls
-
-ENTRYPOINT ["/bin/sh", "-c", "java -jar storage-service-*.jar"]
