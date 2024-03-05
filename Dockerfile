@@ -13,14 +13,14 @@ FROM base as prod_build
 
 RUN mvn clean
 
-RUN mvn package -DskipTests -X
+RUN mvn package
 
 
 FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY --from=prod_build /storage-service/target/storage-service-*.jar /app
+COPY --from=prod_build /app/target/storage-service-*.jar /app
 
 RUN ls
 

@@ -25,10 +25,4 @@ public class Message {
     private String pfpURL;
     private String groupId;
     private String channelName;
-
 }
-
-/**
- * {"email":"briplomo@gmail.com","author":"Bryan","message":"This is bryan's message from spring.","dateTime":[2023,12,12,18,38,49,286815000],"attachment":"","groupId":"65728e07e51fdf72df913759","channelName":"general"}
-
- * */

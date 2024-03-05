@@ -1,24 +1,5 @@
-version: "3.8"
-services:
-  mongodb:
-    container_name: mongodb
-    image: mongodb/mongodb-community-server
-    ports:
-      - 27017:27017
-    volumes:
-      - mongodb_data:/data/db
+https://medium.com/dandelion-tutorials/using-dynamodb-localstack-with-spring-boot-and-spring-data-b7f487bd9e9d
 
-  storage-service:
-    build: ../storage-service
-    platform: linux/x86_64
-    ports:
-      - 8080:8080
-    container_name: storage-service
-    environment:
-      MONGO_URL: mongodb://mongodb/mongodb_data
-    depends_on:
-      mongodb:
-        condition: service_started
+https://medium.com/@sudacgb/integrate-aws-dynamodb-with-spring-boot-dc62b9ceae96
 
-volumes:
-  mongodb_data:
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html
