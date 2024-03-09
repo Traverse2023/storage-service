@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class GroupService {
     @Autowired
-    private GroupRepository groupRepository;
+    private GroupMongoDBRepository groupMongoDBRepository;
 
     public Group addGroup(final String name) {
-        return groupRepository.insert(new Group(name));
+        return groupMongoDBRepository.insert(new Group(name));
         // TODO: exception handling
     }
 }
