@@ -1,7 +1,6 @@
 package com.traverse.storage.message;
 
 import com.traverse.storage.dynamoModels.Message;
-
 import java.util.List;
 
 public class MessageDynamoDBRepository implements MessageRepository {
