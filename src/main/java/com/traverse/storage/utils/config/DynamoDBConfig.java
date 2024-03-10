@@ -53,6 +53,6 @@ public class DynamoDBConfig {
       //                  dynamodbSecretKey
         //        )
      //   );
-    }
+    //}
 
 }
