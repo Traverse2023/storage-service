@@ -7,7 +7,7 @@ public enum NotificationType {
 //    ChannelMessage("channelMessage"),
 //    AdminMessage("adminMessage"),
 //    DirectMessage("directMessage");
-    MessageSent("messageSent");
+    MessageSent("MESSAGE_SENT");
 
     private final String text;
 
