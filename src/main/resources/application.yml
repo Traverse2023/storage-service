@@ -1,13 +1,11 @@
-cloud:
-  aws:
-    region:
-      static: us-east-1
-    credentials:
-      access_key: ASIAY7BDJFZNAOHRWXUY
-      secret_key: /jrOmx9Sf3TzcBj3FVk1boN5Xt5DXjUQvRWLj698
-    end_point:
-      uri: https://sqs.us-east-1.amazonaws.com/816867951976/MessaginQueue.fifo
 
+aws:
+  region: us-east-1
+ # dynamodb:
+ #   endpoint: ${DYNAMODB_ENDPOINT}
+ #   accessKey: ${DYNAMODB_ACCESS_KEY}
+ #   secretKey: ${DYNAMODB_SECRET_KEY}
+#    sessionToken: ${DYNAMODB_ENDPOINT}
 spring:
   main:
     allow-bean-definition-overriding: true
