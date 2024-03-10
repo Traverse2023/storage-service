@@ -1,10 +1,10 @@
 
 aws:
   region: us-east-1
-  dynamodb:
-    endpoint: ${DYNAMODB_ENDPOINT}
-    accessKey: ${DYNAMODB_ACCESS_KEY}
-    secretKey: ${DYNAMODB_SECRET_KEY}
+ # dynamodb:
+ #   endpoint: ${DYNAMODB_ENDPOINT}
+ #   accessKey: ${DYNAMODB_ACCESS_KEY}
+ #   secretKey: ${DYNAMODB_SECRET_KEY}
 #    sessionToken: ${DYNAMODB_ENDPOINT}
 spring:
   main:
