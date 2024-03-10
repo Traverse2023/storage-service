@@ -1,6 +1,6 @@
 package com.traverse.storage.message;
 
-import com.traverse.storage.group.GroupRepository;
+import com.traverse.storage.group.GroupMongoDBRepository;
 import com.traverse.storage.models.Channel;
 import com.traverse.storage.models.Group;
 import com.traverse.storage.models.Message;
@@ -19,7 +19,7 @@ import java.util.*;
 public class MessageService {
 
     @Autowired
-    private GroupRepository repository;
+    private GroupMongoDBRepository repository;
 
     @Autowired
     private MongoTemplate mongoTemplate;
