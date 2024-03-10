@@ -14,11 +14,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DynamoDBConfig {
 
-//    @Value("${aws.dynamodb.endpoint}")
-//    private String dynamodbEndpoint;
+    @Value("${aws.dynamodb.endpoint}")
+    private String dynamodbEndpoint;
 
-//    @Value("${aws.region}")
-//    private String awsRegion;
+    @Value("${aws.region}")
+    private String awsRegion;
 
  //   @Value("${aws.dynamodb.accessKey}")
  //   private String dynamodbAccessKey;
