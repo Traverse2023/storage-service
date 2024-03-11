@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class DynamoDBConfig {
@@ -17,11 +18,15 @@ public class DynamoDBConfig {
     @Value("${aws.region}")
     private String awsRegion;
 
+    @Primary
     @Bean
     public DynamoDBMapper dynamoDBMapper() {
-        return new DynamoDBMapper(amazonDynamoDB());
+        AmazonDynamoDB client = amazonDynamoDB();
+        System.out.println(client.listTables());
+        return new DynamoDBMapper(client);
     }
 
+    @Bean
     public AmazonDynamoDB amazonDynamoDB() {
         return AmazonDynamoDBClientBuilder
                 .standard()
