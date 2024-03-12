@@ -1,8 +1,13 @@
 package com.traverse.storage.message;
 
 import com.traverse.storage.dynamoModels.Message;
+import com.traverse.storage.models.MessageType;
+import com.traverse.storage.models.NotificationType;
+import org.springframework.data.repository.CrudRepository;
+import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
 
-import java.util.Date;
+import java.io.ByteArrayInputStream;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public interface MessageRepository {
@@ -12,16 +17,15 @@ public interface MessageRepository {
     public void deleteMessage(final String primaryKey, final String sortKey);
 
     public Message createMessage(
-            final String channel,
-            final String type,
+            final String groupId,
+            final String channelName,
+            final MessageType type,
             final String id,
-            final String created,
+            final ZonedDateTime created,
             final String sender,
-            final String recipient,
-            final String senderPfp,
             final String text,
-            final String media
+            final List<String> mediaURLs
     );
 
-    public List<Message> getMessages(final String channel);
+    public PageIterable<Message> getMessages(String groupId, String channelName);
 }

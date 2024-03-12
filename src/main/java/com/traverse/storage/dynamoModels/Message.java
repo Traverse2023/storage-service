@@ -1,51 +1,45 @@
 package com.traverse.storage.dynamoModels;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.util.Date;
 
-@Data
+import com.traverse.storage.models.MessageType;
+import lombok.*;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.*;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+
+
+@Value
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@DynamoDBTable(tableName = "Messages")
+@DynamoDbImmutable(builder = Message.MessageBuilder.class)
 public class Message {
 
-    @DynamoDBHashKey(attributeName = "pk")
-    private String pk;
+    @Getter(onMethod = @__({@DynamoDbPartitionKey, @DynamoDbAttribute("pk")}))
+    String partitionKey;
 
-    @DynamoDBRangeKey(attributeName = "sk")
-    private String sk;
+    @Getter(onMethod = @__({@DynamoDbSortKey, @DynamoDbAttribute("sk")}))
+    String sortKey;
 
-    @DynamoDBAttribute(attributeName = "type")
-    private String type;
+    @Getter(onMethod = @__({@DynamoDbAttribute("id")}))
+    String id;
 
-    @DynamoDBAttribute(attributeName = "id")
-    private String id;
+    @Getter(onMethod = @__({@DynamoDbAttribute("type")}))
+    MessageType type;
 
-    @DynamoDBAttribute(attributeName = "created")
-    private Date created;
+    @Getter(onMethod = @__({@DynamoDbAttribute("created")}))
+    ZonedDateTime created;
 
-    @DynamoDBAttribute(attributeName = "sender")
-    private String sender;
+    @Getter(onMethod = @__({@DynamoDbAttribute("sender")}))
+    String sender;
 
-    @DynamoDBAttribute(attributeName = "recipient")
-    private String recipient;
+    @Getter(onMethod = @__({@DynamoDbAttribute("text")}))
+    String text;
 
-    @DynamoDBAttribute(attributeName = "senderPfp")
-    private String senderPfp;
+    @Getter(onMethod = @__({@DynamoDbAttribute("media")}))
+    List<String> mediaURLs;
 
-    @DynamoDBAttribute(attributeName = "text")
-    private String text;
-
-    @DynamoDBAttribute(attributeName = "media")
-    private String media;
-
-    @DynamoDBAttribute
-    private Date updated;
+    @Getter(onMethod = @__({@DynamoDbAttribute("updated")}))
+    ZonedDateTime updated;
 
 }

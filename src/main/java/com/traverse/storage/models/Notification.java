@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import java.time.LocalDateTime;
-
+import java.time.ZonedDateTime;
 
 
 @Data
@@ -18,7 +18,7 @@ public class Notification {
     private String id;
     private String recipient;
     private NotificationType notificationType;
-    private LocalDateTime time;
+    private ZonedDateTime time;
     private String message;
     private String groupId;
     private String groupName;

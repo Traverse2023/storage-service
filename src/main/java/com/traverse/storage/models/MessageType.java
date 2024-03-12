@@ -2,15 +2,15 @@ package com.traverse.storage.models;
 
 import org.apache.http.ParseException;
 
-public enum NotificationType {
-    FRIEND_REQUEST("FRIEND_REQUEST"),
+public enum MessageType {
+
     GROUP_MESSAGE("GROUP_MESSAGE"),
     ADMIN_MESSAGE("ADMIN_MESSAGE"),
     DIRECT_MESSAGE("DIRECT_MESSAGE");
 
     final String text;
 
-    NotificationType(String text) {
+    MessageType(String text) {
         this.text = text;
     }
 

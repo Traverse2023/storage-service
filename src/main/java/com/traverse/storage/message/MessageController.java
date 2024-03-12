@@ -33,7 +33,7 @@ public class MessageController {
 //        messageService.saveMessage(message);
 //    }
     @PostMapping("/addMessage")
-    public void receiveMessageFromQueue(@RequestBody String requestBody) {
+    public void createMessage(@RequestBody String requestBody) {
         JSONObject jsonBody = new JSONObject(requestBody);
         log.info("Receiving message from Main Service...\n{}", jsonBody.toString());
         Message message = new Message();
