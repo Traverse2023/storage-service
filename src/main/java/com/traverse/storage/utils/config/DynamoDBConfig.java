@@ -13,10 +13,13 @@ public class DynamoDBConfig {
     @Value("${aws.region}")
     private String awsRegion;
 
+   // private final String endpoint = String.format("")
+
+
     @Bean
     public DynamoDbClient getDynamoDbClient() {
         return DynamoDbClient.builder()
-                .region(Region.of(awsRegion.toUpperCase()))
+                .region(Region.of(awsRegion))
                 .build();
     }
 

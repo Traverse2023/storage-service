@@ -1,64 +1,42 @@
 package com.traverse.storage.message;
 
-import com.traverse.storage.group.GroupMongoDBRepository;
-import com.traverse.storage.models.Channel;
-import com.traverse.storage.models.Group;
 import com.traverse.storage.models.Message;
-import com.traverse.storage.models.MessagesResponse;
+import com.traverse.storage.models.MessageList;
+import com.traverse.storage.models.MessageType;
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
-import java.util.*;
+
+import java.time.ZonedDateTime;
+import java.util.List;
 
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
+@Builder
 public class MessageService {
 
+    private MessageRepository messageRepository;
     @Autowired
-    private GroupMongoDBRepository repository;
+    MessageService(final MessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
+    }
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
-    public void saveMessage(Message message) {
-        // TODO: Optimize Mongo operation
-        Optional<Group> groupDoc = repository.findById(message.getGroupId());
-        message.setId(String.valueOf(UUID.randomUUID()));
-        if (groupDoc.isPresent()) {
-            Group group = groupDoc.get();
+    public Message saveMessage(final String groupId, final String channelName, final MessageType type,
+                            final String id, final ZonedDateTime created, final String sender,
+                            final String text, final List<String> mediaURLs) {
 
-            // Update the specific field in the map
-            Channel channel = group.getChannels().get(message.getChannelName());
-            channel.addMsg(message);
-            // Update message count
-            channel.setMessageCount(channel.getMessageCount() + 1);
-
-            // Save the updated document
-            repository.save(group);
-        } else {
-            // TODO: Errors
-            // Handle the case where the document with the given ID is not found
-            // You may throw an exception, log a message, etc.
-        }
+        return messageRepository.createMessage(groupId, channelName, type, id, created, sender, text, mediaURLs);
     }
 
 
     // Retrieve paginated messages for specified group-channel
-    public MessagesResponse getMessages(String groupId, String channelName, int pageNum) {
-        Pageable pageable = PageRequest.of(pageNum, 10);
-        Channel channel = repository.findGroupMessages(
-                groupId, channelName, pageable.getPageSize() * (pageable.getPageNumber() - 1), pageable.getPageSize())
-                .get(0).getChannels().get(channelName);
-        log.info(channel.toString());
-        long messageCount = channel.getMessageCount();
-        List<Message> messages = channel.getMessages();
-        Collections.reverse(messages);
-        log.info("Retrieved messages: {}. Message count {}", messages, messageCount);
-        return new MessagesResponse(messageCount, messages);
-        // TODO: implement exception handling and edge cases
+    public MessageList getMessages(String groupId, String channelName, String paginationToken) {
+        return messageRepository.getMessages(groupId, channelName, paginationToken);
+
     }
 
 }

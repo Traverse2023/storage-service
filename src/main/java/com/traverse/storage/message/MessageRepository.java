@@ -1,12 +1,9 @@
 package com.traverse.storage.message;
 
-import com.traverse.storage.dynamoModels.Message;
+import com.traverse.storage.models.Message;
+import com.traverse.storage.models.MessageList;
 import com.traverse.storage.models.MessageType;
-import com.traverse.storage.models.NotificationType;
-import org.springframework.data.repository.CrudRepository;
-import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
 
-import java.io.ByteArrayInputStream;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -27,5 +24,5 @@ public interface MessageRepository {
             final List<String> mediaURLs
     );
 
-    public PageIterable<Message> getMessages(String groupId, String channelName);
+    public MessageList getMessages(String groupId, String channelName, String paginationToken);
 }

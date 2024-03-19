@@ -1,13 +1,18 @@
 package com.traverse.storage.message;
 
-import com.traverse.storage.models.MessagesResponse;
+import com.traverse.storage.models.Message;
+import com.traverse.storage.models.MessageList;
+import com.traverse.storage.models.MessageType;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.traverse.storage.models.Message;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 
 @RestController
@@ -20,30 +25,44 @@ public class MessageController {
     MessageController(MessageService messageService) {
         this.messageService = messageService;
     }
-    
-    @GetMapping("/{groupId}/{channelName}/{pageNumber}")
-    public MessagesResponse getMessages(@PathVariable String groupId, @PathVariable String channelName, @PathVariable int pageNumber) {
-        log.info("Getting messages...");
-        return messageService.getMessages(groupId, channelName, pageNumber);
+
+    @DeleteMapping("/deleteMessage")
+    public String deleteMessage(){
+        return null;
     }
 
-//    @SqsListener(value = "${cloud.aws.end_point.uri}", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
-//    public void receiveMessageFromQueue(Message message) {
-//        log.info("Receiving message from SQS...\n{}", message.toString());
-//        messageService.saveMessage(message);
-//    }
+    public String getMessage(){
+        return null;
+    }
+
+
+
+    @GetMapping("/{groupId}/{channelName}")
+    public MessageList getMessages(@PathVariable String groupId, @PathVariable String channelName, @RequestBody String paginationToken) {
+        log.info("Getting messages...");
+        return messageService.getMessages(groupId, channelName, paginationToken);
+    }
+
     @PostMapping("/addMessage")
-    public void createMessage(@RequestBody String requestBody) {
+    public Message createMessage(@RequestBody String requestBody) {
         JSONObject jsonBody = new JSONObject(requestBody);
-        log.info("Receiving message from Main Service...\n{}", jsonBody.toString());
-        Message message = new Message();
-        message.setEmail(jsonBody.getString("email"));
-        message.setText(jsonBody.getString("text"));
-        message.setFirstName(jsonBody.getString("firstName"));
-        message.setLastName(jsonBody.getString("lastName"));
-        message.setTime(LocalDateTime.now());
-        message.setGroupId(jsonBody.getString("groupId"));
-        message.setChannelName(jsonBody.getString("channelName"));
-        messageService.saveMessage(message);
+        log.info("Receiving message from Main Service...\n{}", jsonBody);
+        // Convert JSON array to array of media URL strings
+        List<String> mediaURLs = new ArrayList<>();
+        JSONArray jsonMedia = jsonBody.getJSONArray("media");
+        for(int i=0;i<jsonMedia.length();i++) {
+            mediaURLs.add(jsonMedia.getString(i));
+        }
+        return messageService.saveMessage(
+                jsonBody.getString("groupId"),
+                jsonBody.getString("channelName"),
+                MessageType.fromString(jsonBody.getString("type")),
+                UUID.randomUUID().toString(),
+                ZonedDateTime.now(),
+                jsonBody.getString("email"),
+                jsonBody.getString("text"),
+                mediaURLs
+        );
+
     }
 }

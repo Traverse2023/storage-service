@@ -1,11 +1,10 @@
 
 aws:
   region: us-east-1
-  dynamodb:
-    endpoint: ${DYNAMODB_ENDPOINT}
- #   accessKey: ${DYNAMODB_ACCESS_KEY}
- #   secretKey: ${DYNAMODB_SECRET_KEY}
-#    sessionToken: ${DYNAMODB_ENDPOINT}
+
+  kms:
+    keyId: da7000d3-ba17-4f0e-8e25-dfc42af0e7fa
+
 spring:
   main:
     allow-bean-definition-overriding: true
