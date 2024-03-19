@@ -1,11 +1,41 @@
 services:
-  mongodb:
-    container_name: mongodb
-    image: mongodb/mongodb-community-server
+  dynamodb:
+    user: root
+    container_name: dynamodb
+    image: amazon/dynamodb-local:latest
+    hostname: dynamodb
     ports:
-      - 27017:27017
+      - 8050:8050
     volumes:
-      - mongodb_data:/data/db
+      - dynamodb_data:/home/dynamodblocal/data
+    working_dir: /home/dynamodblocal
+    command: "-jar DynamoDBLocal.jar -port 8050 -sharedDb -dbPath ./data"
+
+  dynamodb-setup:
+    depends_on:
+      - dynamodb
+    image: amazon/aws-cli
+    volumes:
+      - ./docker-scripts:/tmp/dynamo
+    environment:
+      AWS_ACCESS_KEY_ID: DUMMY
+      AWS_SECRET_ACCESS_KEY: DUMMY
+      DYNAMODB_ENDPOINT: http://dynamodb:8050
+    entrypoint: bash
+    command: "-c '/tmp/dynamo/seedscript.sh'"
+
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin
+    ports:
+      - "8001:8001"
+    environment:
+      DYNAMO_ENDPOINT: "http://dynamodb:8050"
+      AWS_REGION: "us-east-1"
+      AWS_ACCESS_KEY_ID: DUMMY
+      AWS_SECRET_ACCESS_KEY: DUMMY
+    depends_on:
+      dynamodb:
+        condition: service_started
 
   storage-service:
     platform: linux/x86_64
@@ -15,9 +45,11 @@ services:
       - 8080:8080
     command: mvn spring-boot:run
     environment:
-      MONGO_URL: mongodb://127.0.0.1/mongodb_data
+      DYNAMODB_ENDPOINT: http://dynamodb:8050
+      AWS_ACCESS_KEY_ID: DUMMY
+      AWS_SECRET_ACCESS_KEY: DUMMY
     depends_on:
-      mongodb:
+      dynamodb:
         condition: service_started
     develop:
       watch:
@@ -25,8 +57,7 @@ services:
           path: ./storage-service/pom.xml
         - action: sync
           path: ./storage-service
-
           target: /storage-service
 
 volumes:
-  mongodb_data:
+  dynamodb_data:
