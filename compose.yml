@@ -1,41 +1,61 @@
 services:
-  dynamodb:
-    user: root
-    container_name: dynamodb
-    image: amazon/dynamodb-local:latest
-    hostname: dynamodb
-    ports:
-      - 8050:8050
-    volumes:
-      - dynamodb_data:/home/dynamodblocal/data
-    working_dir: /home/dynamodblocal
-    command: "-jar DynamoDBLocal.jar -port 8050 -sharedDb -dbPath ./data"
+#  dynamodb:
+#    user: root
+#    container_name: dynamodb
+#    image: amazon/dynamodb-local:latest
+#    hostname: dynamodb
+#    ports:
+#      - 8050:8050
+#    volumes:
+#      - dynamodb_data:/home/dynamodblocal/data
+#    working_dir: /home/dynamodblocal
+#    command: "-jar DynamoDBLocal.jar -port 8050 -sharedDb -dbPath ./data"
+#
+#  dynamodb-setup:
+#    depends_on:
+#      - dynamodb
+#    image: amazon/aws-cli
+#    volumes:
+#      - ./docker-scripts:/tmp/dynamo
+#    environment:
+#      AWS_ACCESS_KEY_ID: DUMMY
+#      AWS_SECRET_ACCESS_KEY: DUMMY
+#      DYNAMODB_ENDPOINT: http://dynamodb:8050
+#    entrypoint: bash
+#    command: "-c '/tmp/dynamo/seedscript.sh'"
+#
+#  dynamodb-admin:
+#    image: aaronshaf/dynamodb-admin
+#    ports:
+#      - "8001:8001"
+#    environment:
+#      DYNAMO_ENDPOINT: "http://dynamodb:8050"
+#      AWS_REGION: "us-east-1"
+#      AWS_ACCESS_KEY_ID: DUMMY
+#      AWS_SECRET_ACCESS_KEY: DUMMY
+#    depends_on:
+#      dynamodb:
+#        condition: service_started
 
-  dynamodb-setup:
-    depends_on:
-      - dynamodb
-    image: amazon/aws-cli
-    volumes:
-      - ./docker-scripts:/tmp/dynamo
-    environment:
-      AWS_ACCESS_KEY_ID: DUMMY
-      AWS_SECRET_ACCESS_KEY: DUMMY
-      DYNAMODB_ENDPOINT: http://dynamodb:8050
-    entrypoint: bash
-    command: "-c '/tmp/dynamo/seedscript.sh'"
-
-  dynamodb-admin:
-    image: aaronshaf/dynamodb-admin
+  localstack:
+    container_name: localstack
+    image: localstack/localstack
     ports:
-      - "8001:8001"
+      - 4563-4599:4563-4599
+      - 8055:8080
     environment:
-      DYNAMO_ENDPOINT: "http://dynamodb:8050"
-      AWS_REGION: "us-east-1"
-      AWS_ACCESS_KEY_ID: DUMMY
-      AWS_SECRET_ACCESS_KEY: DUMMY
-    depends_on:
-      dynamodb:
-        condition: service_started
+      - SERVICES=dynamodb,kms
+      - DEFAULT_REGION=us-east-1
+      - DEBUG=1
+      - PERSISTENCE=1
+      - DYNAMODB_SHARE_DB=1
+      - DATA_DIR=/var/lib/localstack
+    volumes:
+      - ./seedscript.sh:/etc/localstack/init/ready.d/init-aws.sh
+      - localstack_data:/var/lib/localstack
+
+
+
 
   storage-service:
     platform: linux/x86_64
@@ -45,11 +65,12 @@ services:
       - 8080:8080
     command: mvn spring-boot:run
     environment:
-      DYNAMODB_ENDPOINT: http://dynamodb:8050
+      AWS_ENDPOINT: http://localstack:4566
       AWS_ACCESS_KEY_ID: DUMMY
       AWS_SECRET_ACCESS_KEY: DUMMY
+      PAGINATION_KEY_ID: 00000000-0000-0000-0000-000000000001
     depends_on:
-      dynamodb:
+      localstack:
         condition: service_started
     develop:
       watch:
@@ -60,4 +81,4 @@ services:
           target: /storage-service
 
 volumes:
-  dynamodb_data:
+  localstack_data:

@@ -3,11 +3,8 @@ package com.traverse.storage.utils.serializer;
 import com.amazonaws.services.kms.model.InvalidCiphertextException;
 import com.traverse.storage.utils.exceptions.serializer.InvalidTokenException;
 import io.micrometer.common.util.StringUtils;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.SdkBytes;
 import java.util.Base64;
 import java.nio.charset.Charset;
@@ -24,17 +21,14 @@ import software.amazon.awssdk.services.kms.model.EncryptRequest;
  * that is smaller than 4096 bytes. If your plain text is larger than 4096 bytes, use envelope
  * encryption with KMS instead. See doc: <a href="https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#enveloping">...</a>.
  */
-@Component
-@AllArgsConstructor
-@NoArgsConstructor
+
+@RequiredArgsConstructor
 public class EncryptionSerializer implements TokenSerializer<String> {
 
-    @Autowired
-    private KmsClient kms;
+    private final KmsClient kms;
     private static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
 
-    @Value("${aws.kms.keyId}")
-    private String keyId;
+    private final String keyId;
 
     @Override
     public String deserialize(final String encodedStartKey) throws InvalidTokenException {

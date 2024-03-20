@@ -2,8 +2,11 @@ package com.traverse.storage.utils.serializer;
 
 
 import com.traverse.storage.utils.exceptions.serializer.InvalidTokenException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.kms.KmsClient;
 
@@ -23,9 +26,9 @@ import java.util.Map;
  * <p>Deserialize flow:
  * Token -> Base64 decoded plaintext -> Json String with TTL -> Json String -> DynamoDb start key
  */
-@Component
+@Service
+@Slf4j
 public class PaginationTokenSerializer implements TokenSerializer<Map<String, AttributeValue>> {
-
     private final TokenSerializer<Map<String, AttributeValue>> dynamoDbStartKeySerializer;
     private final TokenSerializer<String> timeBasedTokenSerializer;
     private final TokenSerializer<String> encryptedTokenSerializer;
@@ -33,15 +36,18 @@ public class PaginationTokenSerializer implements TokenSerializer<Map<String, At
     /**
      * Construct PaginationTokenSerializer.
      */
-    public PaginationTokenSerializer () {
+    @Autowired
+    public PaginationTokenSerializer (final KmsClient kms, @Value("${aws.kms.keyId}") String kmsKeyId) {
+
         this.dynamoDbStartKeySerializer = new JacksonTokenMapper();
         this.timeBasedTokenSerializer = new ExpirationTimestampSerializer();
-        this.encryptedTokenSerializer = new EncryptionSerializer();
+        this.encryptedTokenSerializer = new EncryptionSerializer(kms, kmsKeyId);
     }
 
     @Override
     public Map<String, AttributeValue> deserialize(final String token)
             throws InvalidTokenException {
+
         String plaintext = encryptedTokenSerializer.deserialize(token);
         String json = timeBasedTokenSerializer.deserialize(plaintext);
         return dynamoDbStartKeySerializer.deserialize(json);
@@ -53,4 +59,5 @@ public class PaginationTokenSerializer implements TokenSerializer<Map<String, At
         String jsonWithTtl = timeBasedTokenSerializer.serialize(json);
         return encryptedTokenSerializer.serialize(jsonWithTtl);
     }
+
 }

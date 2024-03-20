@@ -1,10 +1,9 @@
 
 aws:
   region: us-east-1
-  dynamodb:
-    endpoint: ${DYNAMODB_ENDPOINT}
+  local_endpoint: ${AWS_ENDPOINT}
   kms:
-    keyId: da7000d3-ba17-4f0e-8e25-dfc42af0e7fa
+    keyId: ${PAGINATION_KEY_ID}
 
 spring:
   main:
