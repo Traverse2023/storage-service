@@ -3,6 +3,7 @@ package com.traverse.storage.message;
 import com.traverse.storage.models.Message;
 import com.traverse.storage.models.MessageList;
 import com.traverse.storage.models.MessageType;
+import com.traverse.storage.utils.exceptions.mongo.MessagesNotFoundException;
 import com.traverse.storage.utils.exceptions.serializer.InvalidTokenException;
 import com.traverse.storage.utils.serializer.PaginationTokenSerializer;
 import com.traverse.storage.utils.serializer.TokenSerializer;
@@ -151,7 +152,7 @@ public class MessageDynamoDBRepository implements MessageRepository {
      *
      * */
     @Override
-    public MessageList getMessages(final String groupId, final String channelName, final String nextPageToken) {
+    public MessageList getMessages(final String groupId, final String channelName, final String nextPageToken) throws MessagesNotFoundException {
 
         // Holds attribute values to use in query as aliases in case keys are reserved words
         Map<String,String> expressionAttributesNames = new HashMap<>();
@@ -172,11 +173,12 @@ public class MessageDynamoDBRepository implements MessageRepository {
 
         // Set exclusiveStartKey for next page if present. This indicates more items are left
         //  to query or that this is the initial request to get messages.
-        if (nextPageToken != null) {
+        if (nextPageToken != null && !nextPageToken.isEmpty()) {
             try {
                 queryRequestBuilder.exclusiveStartKey(tokenSerializer.deserialize(nextPageToken));
             } catch (InvalidTokenException e) {
-                log.error("Bad request: unable to deserialize next token {}. Token is invalid.", nextPageToken);
+                log.error("Bad request: unable to deserialize next token {}. Token is invalid.", nextPageToken, e);
+                throw new MessagesNotFoundException("Bad request: unable to deserialize next token. Token is invalid." + e.getMessage());
             }
         }
         QueryResponse queryResponse = client.query(queryRequestBuilder.build());

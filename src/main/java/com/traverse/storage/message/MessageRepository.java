@@ -3,6 +3,7 @@ package com.traverse.storage.message;
 import com.traverse.storage.models.Message;
 import com.traverse.storage.models.MessageList;
 import com.traverse.storage.models.MessageType;
+import com.traverse.storage.utils.exceptions.mongo.MessagesNotFoundException;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -24,5 +25,5 @@ public interface MessageRepository {
             final List<String> mediaURLs
     );
 
-    public MessageList getMessages(String groupId, String channelName, String paginationToken);
+    public MessageList getMessages(String groupId, String channelName, String paginationToken) throws MessagesNotFoundException;
 }

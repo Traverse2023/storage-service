@@ -3,6 +3,7 @@ package com.traverse.storage.message;
 import com.traverse.storage.models.Message;
 import com.traverse.storage.models.MessageList;
 import com.traverse.storage.models.MessageType;
+import com.traverse.storage.utils.exceptions.mongo.MessagesNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,9 +39,10 @@ public class MessageController {
 
 
     @GetMapping("/{groupId}/{channelName}")
-    public MessageList getMessages(@PathVariable String groupId, @PathVariable String channelName, @RequestBody String paginationToken) {
+    public MessageList getMessages(@PathVariable String groupId, @PathVariable String channelName, @RequestBody(required = false) String requestBody) throws MessagesNotFoundException {
         log.info("Getting messages...");
-        return messageService.getMessages(groupId, channelName, paginationToken);
+        JSONObject jsonBody = new JSONObject(requestBody!= null ? requestBody : "{}");
+        return messageService.getMessages(groupId, channelName, jsonBody.optString("cursor"));
     }
 
     @PostMapping("/addMessage")
