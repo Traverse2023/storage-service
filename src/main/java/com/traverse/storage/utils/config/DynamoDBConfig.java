@@ -8,8 +8,8 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClientBuilder;
-
 import java.net.URI;
+
 
 @Configuration
 @Slf4j
@@ -17,6 +17,7 @@ public class DynamoDBConfig {
 
     @Value("${aws.region}")
     private String awsRegion;
+
 
     @Value("${aws.endpoint}")
     private String endpoint;
