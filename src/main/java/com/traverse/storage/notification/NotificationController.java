@@ -37,7 +37,7 @@ public class NotificationController {
      * @param pageNumber the pagination page number of results that should be fetched from the database
      * @return A list of notifications representing a single paginated result out of all notifications
      * */
-    @GetMapping("/getNotifications/")
+    @GetMapping("/getNotifications")
     public NotificationList getNotifications(@RequestBody String requestBody) {
         JSONObject jsonBody = new JSONObject(requestBody);
         String userId = jsonBody.getString("userId");
