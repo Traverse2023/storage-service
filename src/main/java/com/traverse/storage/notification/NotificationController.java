@@ -2,7 +2,6 @@ package com.traverse.storage.notification;
 
 import com.traverse.storage.models.Notification;
 import com.traverse.storage.models.NotificationList;
-import com.traverse.storage.utils.exceptions.mongo.MessagesNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +20,8 @@ public class NotificationController {
     /**
      *
      *
-     * @param requestBody json containing a notification object to be stored in DB
-     * @return Notification object back to front end to be used for future calls on stored notification
+     * @param notification  json containing a notification object to be created and stored in database
+     * @return     object back to front end to be used for future calls on stored notification
      * */
     @PostMapping("/createNotification")
     public Notification createNotification(@RequestBody Notification notification) {
@@ -33,15 +32,13 @@ public class NotificationController {
     /**
      *
      *
-     * @param recipientEmail the email of the user who the notification is to be sent to
-     * @param pageNumber the pagination page number of results that should be fetched from the database
+     * @param userId the UUID of the user who the notification is sent to
+     * @param cursor the pagination implementation to dictate the next set of messages to be retrieved.
+     *               Only forward pagination is enabled.
      * @return A list of notifications representing a single paginated result out of all notifications
      * */
-    @GetMapping("/getNotifications")
-    public NotificationList getNotifications(@RequestBody String requestBody) {
-        JSONObject jsonBody = new JSONObject(requestBody);
-        String userId = jsonBody.getString("userId");
-        String cursor = jsonBody.optString("cursor");
+    @GetMapping("/getNotifications/{userId}")
+    public NotificationList getNotifications(@PathVariable String userId, @RequestParam(defaultValue = "") String cursor) {
         log.info("Getting notifications for user: {}", userId);
         return notificationService.getNotifications(userId, cursor);
     }

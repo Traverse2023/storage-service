@@ -161,6 +161,7 @@ public class MessageDynamoDBRepository implements MessageRepository {
                 .keyConditionExpression("#pk = :pkValue")
                 .expressionAttributeNames(expressionAttributesNames)
                 .expressionAttributeValues(expressionAttributeValues)
+                .scanIndexForward(false)
                 .limit(PAGE_SIZE);
 
         // Set exclusiveStartKey for next page if present. This indicates more items are left

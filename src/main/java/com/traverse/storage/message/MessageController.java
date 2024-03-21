@@ -32,10 +32,11 @@ public class MessageController {
      *
      */
     @GetMapping("/{groupId}/{channelName}")
-    public MessageList getMessages(@PathVariable String groupId, @PathVariable String channelName, @RequestBody(required = false) String requestBody) throws MessagesNotFoundException {
-        log.info("Getting messages...");
-        JSONObject jsonBody = new JSONObject(requestBody!= null ? requestBody : "{}");
-        return messageService.getMessages(groupId, channelName, jsonBody.optString("cursor"));
+    public MessageList getMessages(@PathVariable String groupId, @PathVariable String channelName, @RequestParam(defaultValue = "") String cursor) throws MessagesNotFoundException {
+        log.info("Getting messages for chat {}...", groupId+"#"+channelName);
+        MessageList messages =  messageService.getMessages(groupId, channelName, cursor);
+        log.info("Messages retrieved: {}", messages);
+        return messages;
     }
 
     /**
