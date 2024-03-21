@@ -9,6 +9,6 @@ public interface NotificationRepository {
 
     Notification createNotification(Notification notification);
 
-    NotificationList getNotifications(String userId, String cursor) throws MessagesNotFoundException;
+    NotificationList getNotifications(String userId, String cursor);
 
 }

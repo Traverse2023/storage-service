@@ -100,7 +100,7 @@ public class NotificationDynamoDBRepository implements NotificationRepository {
     }
 
     @Override
-    public NotificationList getNotifications(String partitionToken, String paginationToken) throws MessagesNotFoundException {
+    public NotificationList getNotifications(String partitionToken, String paginationToken) throws RuntimeException {
         Map<String,String> expressionAttributesNames = new HashMap<>();
         expressionAttributesNames.put("#pk","pk");
         Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
