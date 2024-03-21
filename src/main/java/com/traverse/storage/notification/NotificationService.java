@@ -2,7 +2,6 @@ package com.traverse.storage.notification;
 
 import com.traverse.storage.models.Notification;
 import com.traverse.storage.models.NotificationList;
-import com.traverse.storage.utils.exceptions.mongo.MessagesNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

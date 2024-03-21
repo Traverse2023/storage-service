@@ -1,11 +1,8 @@
 package com.traverse.storage.notification;
 
-
-import com.traverse.storage.models.MessageList;
 import com.traverse.storage.models.Notification;
 import com.traverse.storage.models.NotificationList;
 import com.traverse.storage.models.NotificationType;
-import com.traverse.storage.utils.exceptions.mongo.MessagesNotFoundException;
 import com.traverse.storage.utils.exceptions.serializer.InvalidTokenException;
 import com.traverse.storage.utils.serializer.PaginationTokenSerializer;
 import com.traverse.storage.utils.serializer.TokenSerializer;
@@ -100,7 +97,7 @@ public class NotificationDynamoDBRepository implements NotificationRepository {
     }
 
     @Override
-    public NotificationList getNotifications(String partitionToken, String paginationToken) throws RuntimeException {
+    public NotificationList getNotifications(String partitionToken, String paginationToken) {
         Map<String,String> expressionAttributesNames = new HashMap<>();
         expressionAttributesNames.put("#pk","pk");
         Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
@@ -133,7 +130,7 @@ public class NotificationDynamoDBRepository implements NotificationRepository {
         if (lastEvaluatedKey != null && !lastEvaluatedKey.isEmpty()) {
             notificationListBuilder.cursor(tokenSerializer.serialize(lastEvaluatedKey));
         } else {
-            log.info("No pagination token present. Fulfilling request without pagination");
+            log.info("No pagination token present. End of notifications.");
         }
         log.info("Notifications retrieved successfully: \n{}", notifications);
         return notificationListBuilder.build();
