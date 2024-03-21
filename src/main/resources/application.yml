@@ -1,9 +1,9 @@
 
 aws:
   region: us-east-1
-  local_endpoint: ${AWS_ENDPOINT}
+  endpoint: ${AWS_ENDPOINT:#{null}}
   kms:
-    keyId: ${PAGINATION_KEY_ID}
+    keyId: ${PAGINATION_KEY_ID:00000000-0000-0000-0000-000000000001}
 
 spring:
   main:

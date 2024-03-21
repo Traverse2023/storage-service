@@ -10,20 +10,21 @@ import java.util.List;
 
 public interface MessageRepository {
 
-    public Message updateMessage(final String primaryKey, final String sortKey, final String newText, final String newMedia);
+    Message updateMessage(final String primaryKey, final String sortKey, final String newText, final String newMedia);
 
-    public void deleteMessage(final String primaryKey, final String sortKey);
+    Message deleteMessage(final Message message);
 
-    public Message createMessage(
-            final String groupId,
-            final String channelName,
-            final MessageType type,
-            final String id,
-            final ZonedDateTime created,
-            final String sender,
-            final String text,
-            final List<String> mediaURLs
-    );
+    Message createMessage(final Message message);
 
-    public MessageList getMessages(String groupId, String channelName, String paginationToken) throws MessagesNotFoundException;
+    MessageList getMessages(String groupId, String channelName, String paginationToken) throws MessagesNotFoundException;
+
+    Message editMessage();
+
+    Message getMessage();
+
+    Message deleteChat();
+
+    Message deleteGroup();
+
+
 }

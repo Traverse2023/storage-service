@@ -1,12 +1,11 @@
 package com.traverse.storage.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.traverse.storage.models.Notification;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbImmutable;
-
 import java.util.List;
 
 @Data
@@ -14,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MessageList {
+public class NotificationList {
     private String cursor;
-    private List<Message> messages;
+    private List<Notification> notifications;
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -27,17 +28,9 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-    @DeleteMapping("/deleteMessage")
-    public String deleteMessage(){
-        return null;
-    }
-
-    public String getMessage(){
-        return null;
-    }
-
-
-
+    /**
+     *
+     */
     @GetMapping("/{groupId}/{channelName}")
     public MessageList getMessages(@PathVariable String groupId, @PathVariable String channelName, @RequestBody(required = false) String requestBody) throws MessagesNotFoundException {
         log.info("Getting messages...");
@@ -45,26 +38,55 @@ public class MessageController {
         return messageService.getMessages(groupId, channelName, jsonBody.optString("cursor"));
     }
 
+    /**
+     *
+     */
     @PostMapping("/addMessage")
-    public Message createMessage(@RequestBody String requestBody) {
-        JSONObject jsonBody = new JSONObject(requestBody);
-        log.info("Receiving message from Main Service...\n{}", jsonBody);
-        // Convert JSON array to array of media URL strings
-        List<String> mediaURLs = new ArrayList<>();
-        JSONArray jsonMedia = jsonBody.getJSONArray("media");
-        for(int i=0;i<jsonMedia.length();i++) {
-            mediaURLs.add(jsonMedia.getString(i));
-        }
-        return messageService.saveMessage(
-                jsonBody.getString("groupId"),
-                jsonBody.getString("channelName"),
-                MessageType.fromString(jsonBody.getString("type")),
-                UUID.randomUUID().toString(),
-                ZonedDateTime.now(),
-                jsonBody.getString("email"),
-                jsonBody.getString("text"),
-                mediaURLs
-        );
+    public Message createMessage(@RequestBody Message message) {
+        log.info("Creating message:\n{}", message);
+        return messageService.createMessage(message);
 
     }
+
+    /**
+     *
+     */
+    @DeleteMapping("/deleteMessage")
+    public Message deleteMessage(@RequestBody Message message){
+        Message deletedMessage = messageService.deleteMessage(message);
+        log.info("Deleted message: \n{}", deletedMessage);
+        return deletedMessage;
+    }
+
+    /**
+     *
+     */
+//    @GetMapping
+//    public Message getMessage(final String pk, final String sk){
+//        return messageService.getMessage();
+//    }
+//
+//    /**
+//     *
+//     */
+//    @PatchMapping
+//    public Message editMessage(final String pk, final String sk) {
+//        return messageService.editMessage();
+//    }
+//
+//    /**
+//     *
+//     */
+//    @DeleteMapping
+//    public void deleteChat(final String pk) {
+//        messageService.deleteChat();
+//    }
+//
+//    /**
+//     *
+//     */
+//    @DeleteMapping
+//    public void deleteGroup(final String groupId){
+//        messageService.deleteGroup();
+//    }
 }

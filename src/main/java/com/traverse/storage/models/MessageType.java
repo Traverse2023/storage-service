@@ -1,5 +1,6 @@
 package com.traverse.storage.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import org.apache.http.ParseException;
 
 public enum MessageType {
@@ -14,10 +15,12 @@ public enum MessageType {
         this.text = text;
     }
 
+    @Override
     public String toString() {
         return this.text;
     }
 
+    @JsonCreator
     public static MessageType fromString(String text) throws ParseException {
         for (MessageType type: MessageType.values()) {
             if(type.text.equalsIgnoreCase(text)) {

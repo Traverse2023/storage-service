@@ -2,6 +2,7 @@ package com.traverse.storage.models;
 
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.*;
 
@@ -12,11 +13,12 @@ import java.util.List;
 
 
 
-@Builder
+@Builder(toBuilder = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamoDbBean
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Message {
 
     @Getter(onMethod = @__({@DynamoDbPartitionKey, @DynamoDbAttribute("pk")}))
@@ -27,9 +29,13 @@ public class Message {
 
     String id;
 
+    String chatId;
+
+    String channelId;
+
     MessageType type;
 
-    ZonedDateTime created;
+    String created;
 
     String sender;
 
@@ -37,6 +43,6 @@ public class Message {
 
     List<String> media;
 
-    ZonedDateTime updated;
+    String updated;
 
 }

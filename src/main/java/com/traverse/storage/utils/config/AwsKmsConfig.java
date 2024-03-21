@@ -14,14 +14,14 @@ public class AwsKmsConfig {
     @Value("${aws.region}")
     private String awsRegion;
 
-    @Value("${aws.local_endpoint:#{null}}")
+    @Value("${aws.endpoint}")
     private String endpoint;
 
     @Bean
     public  KmsClient amazonKmsClient() {
         return KmsClient.builder()
                 .region(Region.of(awsRegion))
-                .endpointOverride(URI.create(endpoint!=null ? endpoint : String.format("kms-fips.%s.amazonaws.com", awsRegion)))
+                .endpointOverride(URI.create(endpoint != null ? endpoint : String.format("https://kms-fips.%s.amazonaws.com", awsRegion)))
                 .build();
     }
 }

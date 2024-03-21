@@ -20,7 +20,10 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
+
+import java.awt.event.WindowFocusListener;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static software.amazon.awssdk.enhanced.dynamodb.mapper.StaticAttributeTags.primaryPartitionKey;
@@ -57,7 +60,7 @@ public class MessageDynamoDBRepository implements MessageRepository {
                     .addAttribute(MessageType.class, a -> a.name("type")
                             .getter(Message::getType)
                             .setter(Message::setType))
-                    .addAttribute(ZonedDateTime.class, a -> a.name("created")
+                    .addAttribute(String.class, a -> a.name("created")
                             .getter(Message::getCreated)
                             .setter(Message::setCreated))
                     .addAttribute(String.class, a -> a.name("sender")
@@ -73,7 +76,7 @@ public class MessageDynamoDBRepository implements MessageRepository {
                                     .collectionConstructor(ArrayList::new)
                                     .elementConverter(StringAttributeConverter.create())
                                     .build()))
-                    .addAttribute(ZonedDateTime.class, a -> a.name("updated")
+                    .addAttribute(String.class, a -> a.name("updated")
                             .getter(Message::getUpdated)
                             .setter(Message::setUpdated))
                     .build();
@@ -102,17 +105,18 @@ public class MessageDynamoDBRepository implements MessageRepository {
      *
      * */
     @Override
-    public void deleteMessage(final String partitionKey, final String sortKey) {
+    public Message deleteMessage(final Message message) {
         Key key = Key.builder()
-                .partitionValue(partitionKey)
-                .sortValue(sortKey)
+                .partitionValue(message.getPk())
+                .sortValue(message.getSk())
                 .build();
         DeleteItemEnhancedRequest request = DeleteItemEnhancedRequest.builder()
                 .key(key)
                 .build();
 
         Message deletedMessage = table.deleteItem(request);
-        log.info("Message successfully deleted: {}", deletedMessage.getSk());
+        log.info("Message deleted successfully: \n{}", deletedMessage);
+        return deletedMessage;
     }
 
     /**
@@ -120,31 +124,21 @@ public class MessageDynamoDBRepository implements MessageRepository {
      *
      * */
     @Override
-    public Message createMessage(
-            final String groupId, final String channelName, final MessageType type,
-            final String id, final ZonedDateTime created, final String sender,
-            final String text, final List<String> mediaURLs
-    ) {
-        // Specific to dynamo db. Create partition key and sort key from given properties
-        final String pk = String.format("%s#%s", groupId, channelName);
+    public Message createMessage(final Message message) {
+        String pk = message.getChatId();
+        // If channelId is given in request, append it to groupId to form partitionKey
+        if (message.getChannelId() != null && !message.getChannelId().isEmpty()) {
+            pk += "#" + message.getChannelId();
+        }
 
-        final String sk = String.format("%s#%s", created, id);
+        final String sk = String.format("%s#%s", message.getCreated(), message.getId());
 
-        final Message message = Message.builder()
-                .pk(pk)
-                .sk(sk)
-                .id(id)
-                .type(type)
-                .created(created)
-                .sender(sender)
-                .text(text)
-                .media(mediaURLs)
-                .updated(created)
-                .build();
+        final Message newMessage = message.toBuilder().pk(pk).sk(sk).build();
 
-        table.putItem(message);
-        log.info("Message successfully created: {}", message.getSk());
-        return message;
+        log.info("Creating message: \n{}", newMessage);
+        table.putItem(newMessage);
+        log.info("Message successfully created: {}", newMessage);
+        return newMessage;
     }
 
 
@@ -152,15 +146,13 @@ public class MessageDynamoDBRepository implements MessageRepository {
      *
      * */
     @Override
-    public MessageList getMessages(final String groupId, final String channelName, final String nextPageToken) throws MessagesNotFoundException {
+    public MessageList getMessages(final String groupId, final String channelName, final String paginationToken) throws MessagesNotFoundException {
 
         // Holds attribute values to use in query as aliases in case keys are reserved words
         Map<String,String> expressionAttributesNames = new HashMap<>();
         expressionAttributesNames.put("#pk","pk");
         // #pk -> pk -> :pkValue -> ACTUAL_KEY!!???
-
         String partitionKey = String.format("%s#%s", groupId, channelName);
-
         Map<String,AttributeValue> expressionAttributeValues = new HashMap<>();
         expressionAttributeValues.put(":pkValue", AttributeValue.builder().s(partitionKey).build());
 
@@ -173,11 +165,11 @@ public class MessageDynamoDBRepository implements MessageRepository {
 
         // Set exclusiveStartKey for next page if present. This indicates more items are left
         //  to query or that this is the initial request to get messages.
-        if (nextPageToken != null && !nextPageToken.isEmpty()) {
+        if (paginationToken != null && !paginationToken.isEmpty()) {
             try {
-                queryRequestBuilder.exclusiveStartKey(tokenSerializer.deserialize(nextPageToken));
+                queryRequestBuilder.exclusiveStartKey(tokenSerializer.deserialize(paginationToken));
             } catch (InvalidTokenException e) {
-                log.error("Bad request: unable to deserialize next token {}. Token is invalid.", nextPageToken, e);
+                log.error("Bad request: unable to deserialize next token {}. Token is invalid.", paginationToken, e);
                 throw new MessagesNotFoundException("Bad request: unable to deserialize next token. Token is invalid." + e.getMessage());
             }
         }
@@ -186,16 +178,35 @@ public class MessageDynamoDBRepository implements MessageRepository {
 
         // Populate messages after mapping them to Message class
         queryResponse.items().forEach(m -> messages.add(table.tableSchema().mapToItem(m)));
-        messages.forEach(m -> log.info(m.getText()));
         Map<String, AttributeValue> lastEvaluatedKey = queryResponse.lastEvaluatedKey();
         MessageList.MessageListBuilder messageListBuilder = MessageList.builder()
                 .messages(messages);
 
         // Populate pagination token if exists
         if (lastEvaluatedKey != null && !lastEvaluatedKey.isEmpty()) {
-            messageListBuilder.paginationToken(tokenSerializer.serialize(lastEvaluatedKey));
+            messageListBuilder.cursor(tokenSerializer.serialize(lastEvaluatedKey));
         }
         return messageListBuilder.build();
+    }
+
+    @Override
+    public Message editMessage() {
+        return null;
+    }
+
+    @Override
+    public Message getMessage() {
+        return null;
+    }
+
+    @Override
+    public Message deleteChat() {
+        return null;
+    }
+
+    @Override
+    public Message deleteGroup() {
+        return null;
     }
 
 }
