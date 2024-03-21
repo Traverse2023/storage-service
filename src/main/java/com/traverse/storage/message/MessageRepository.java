@@ -1,27 +1,30 @@
 package com.traverse.storage.message;
 
-import com.traverse.storage.dynamoModels.Message;
+import com.traverse.storage.models.Message;
+import com.traverse.storage.models.MessageList;
+import com.traverse.storage.models.MessageType;
+import com.traverse.storage.utils.exceptions.mongo.MessagesNotFoundException;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public interface MessageRepository {
 
-    public Message updateMessage(final String primaryKey, final String sortKey, final String newText, final String newMedia);
+    Message updateMessage(final String primaryKey, final String sortKey, final String newText, final String newMedia);
 
-    public void deleteMessage(final String primaryKey, final String sortKey);
+    Message deleteMessage(final Message message);
 
-    public Message createMessage(
-            final String channel,
-            final String type,
-            final String id,
-            final String created,
-            final String sender,
-            final String recipient,
-            final String senderPfp,
-            final String text,
-            final String media
-    );
+    Message createMessage(final Message message);
 
-    public List<Message> getMessages(final String channel);
+    MessageList getMessages(String groupId, String channelName, String paginationToken) throws MessagesNotFoundException;
+
+    Message editMessage();
+
+    Message getMessage();
+
+    Message deleteChat();
+
+    Message deleteGroup();
+
+
 }

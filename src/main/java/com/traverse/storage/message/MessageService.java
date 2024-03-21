@@ -1,64 +1,71 @@
 package com.traverse.storage.message;
 
-import com.traverse.storage.group.GroupMongoDBRepository;
-import com.traverse.storage.models.Channel;
-import com.traverse.storage.models.Group;
 import com.traverse.storage.models.Message;
-import com.traverse.storage.models.MessagesResponse;
+import com.traverse.storage.models.MessageList;
+import com.traverse.storage.models.MessageType;
+import com.traverse.storage.utils.exceptions.mongo.MessagesNotFoundException;
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
-import java.util.*;
+
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
+@Builder
 public class MessageService {
 
+    private MessageRepository messageRepository;
     @Autowired
-    private GroupMongoDBRepository repository;
-
-    @Autowired
-    private MongoTemplate mongoTemplate;
-    public void saveMessage(Message message) {
-        // TODO: Optimize Mongo operation
-        Optional<Group> groupDoc = repository.findById(message.getGroupId());
-        message.setId(String.valueOf(UUID.randomUUID()));
-        if (groupDoc.isPresent()) {
-            Group group = groupDoc.get();
-
-            // Update the specific field in the map
-            Channel channel = group.getChannels().get(message.getChannelName());
-            channel.addMsg(message);
-            // Update message count
-            channel.setMessageCount(channel.getMessageCount() + 1);
-
-            // Save the updated document
-            repository.save(group);
-        } else {
-            // TODO: Errors
-            // Handle the case where the document with the given ID is not found
-            // You may throw an exception, log a message, etc.
-        }
+    MessageService(final MessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
     }
 
 
+    public Message createMessage(final Message message) {
+        final String id = UUID.randomUUID().toString();
+        final String created = DateTimeFormatter.ISO_ZONED_DATE_TIME.format(ZonedDateTime.now());
+
+        final Message newMessage = message.toBuilder()
+                .id(id)
+                .created(created)
+                .updated(created)
+                .build();
+        return messageRepository.createMessage(newMessage);
+    }
+
     // Retrieve paginated messages for specified group-channel
-    public MessagesResponse getMessages(String groupId, String channelName, int pageNum) {
-        Pageable pageable = PageRequest.of(pageNum, 10);
-        Channel channel = repository.findGroupMessages(
-                groupId, channelName, pageable.getPageSize() * (pageable.getPageNumber() - 1), pageable.getPageSize())
-                .get(0).getChannels().get(channelName);
-        log.info(channel.toString());
-        long messageCount = channel.getMessageCount();
-        List<Message> messages = channel.getMessages();
-        Collections.reverse(messages);
-        log.info("Retrieved messages: {}. Message count {}", messages, messageCount);
-        return new MessagesResponse(messageCount, messages);
-        // TODO: implement exception handling and edge cases
+    public MessageList getMessages(String groupId, String channelName, String paginationToken) throws MessagesNotFoundException {
+        return messageRepository.getMessages(groupId, channelName, paginationToken);
+
+    }
+
+    public Message editMessage() {
+        return messageRepository.editMessage();
+    }
+
+    public Message getMessage() {
+        return messageRepository.getMessage();
+    }
+
+    public Message deleteMessage(final Message message) {
+        return messageRepository.deleteMessage(message);
+    }
+
+    public void deleteChat() {
+        messageRepository.deleteChat();
+    }
+
+    public void deleteGroup() {
+        messageRepository.deleteGroup();
     }
 
 }

@@ -1,28 +1,48 @@
 package com.traverse.storage.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.*;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+
+
+
+
+
+@Builder(toBuilder = true)
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@DynamoDbBean
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Message {
-    private String id;
-    private String email;
-    private String firstName;
-    private String lastName;
-    private String text;
-    private LocalDateTime time;
-    private String pfpURL;
-    private String groupId;
-    private String channelName;
+
+    @Getter(onMethod = @__({@DynamoDbPartitionKey, @DynamoDbAttribute("pk")}))
+    String pk;
+
+    @Getter(onMethod = @__({@DynamoDbSortKey, @DynamoDbAttribute("sk")}))
+    String sk;
+
+    String id;
+
+    String chatId;
+
+    String channelId;
+
+    MessageType type;
+
+    String created;
+
+    String sender;
+
+    String text;
+
+    List<String> media;
+
+    String updated;
+
 }

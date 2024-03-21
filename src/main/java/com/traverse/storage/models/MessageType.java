@@ -3,15 +3,15 @@ package com.traverse.storage.models;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.apache.http.ParseException;
 
-public enum NotificationType {
-    FRIEND_REQUEST("FRIEND_REQUEST"),
+public enum MessageType {
+
     GROUP_MESSAGE("GROUP_MESSAGE"),
     ADMIN_MESSAGE("ADMIN_MESSAGE"),
     DIRECT_MESSAGE("DIRECT_MESSAGE");
 
     final String text;
 
-    NotificationType(String text) {
+    MessageType(String text) {
         this.text = text;
     }
 
@@ -21,8 +21,8 @@ public enum NotificationType {
     }
 
     @JsonCreator
-    public static NotificationType fromString(String text) throws ParseException {
-        for (NotificationType type: NotificationType.values()) {
+    public static MessageType fromString(String text) throws ParseException {
+        for (MessageType type: MessageType.values()) {
             if(type.text.equalsIgnoreCase(text)) {
                 return type;
             }

@@ -1,28 +1,35 @@
 package com.traverse.storage.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
+import java.time.ZonedDateTime;
 
-
-
+@Builder(toBuilder = true)
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@DynamoDbBean
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Notification {
-    @Id
+
+    @Getter(onMethod = @__({@DynamoDbPartitionKey, @DynamoDbAttribute("pk")}))
+    String pk;
+
+    @Getter(onMethod = @__({@DynamoDbSortKey, @DynamoDbAttribute("sk")}))
+    String sk;
+
     private String id;
-    private String recipient;
-    private NotificationType notificationType;
-    private LocalDateTime time;
-    private String message;
-    private String groupId;
-    private String groupName;
+
+    private NotificationType type;
+
+    private String created;
+
+    private String chatId;
+
     private String sender;
+
 }
-
-

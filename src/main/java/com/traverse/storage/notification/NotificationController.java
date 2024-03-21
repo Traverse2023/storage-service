@@ -1,24 +1,21 @@
 package com.traverse.storage.notification;
 
-
 import com.traverse.storage.models.Notification;
-import com.traverse.storage.models.NotificationType;
+import com.traverse.storage.models.NotificationList;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @Slf4j
 @RequestMapping(path = "api/v1/notifications")
 public class NotificationController {
+
+    private final NotificationService notificationService;
+
     @Autowired
-    private NotificationService notificationService;
+    NotificationController(NotificationService service) {this.notificationService = service;}
 
     /**
      *
@@ -27,19 +24,8 @@ public class NotificationController {
      * @return Notification object back to front end to be used for future calls on stored notification
      * */
     @PostMapping("/createNotification")
-    public Notification createNotification(@RequestBody String requestBody) {
-        System.out.println("REQUEST BODY: " + requestBody);
-        JSONObject jsonBody = new JSONObject(requestBody);
-
-        Notification notification = Notification.builder()
-                .recipient(jsonBody.getString("recipientEmail"))
-                .groupId(jsonBody.optString("groupId"))
-                .groupName(jsonBody.optString("groupName"))
-                .notificationType(NotificationType.fromString(jsonBody.getString("notificationType")))
-                .message(jsonBody.getString("message"))
-                .time(LocalDateTime.now())
-                .sender(jsonBody.optString("senderEmail"))
-                .build();
+    public Notification createNotification(@RequestBody Notification notification) {
+        log.info("Creating notification: {}", notification);
         return notificationService.createNotification(notification);
     }
 
@@ -50,20 +36,24 @@ public class NotificationController {
      * @param pageNumber the pagination page number of results that should be fetched from the database
      * @return A list of notifications representing a single paginated result out of all notifications
      * */
-    @GetMapping("/getNotifications/{recipientEmail}/{pageNumber}")
-    public List<Notification> getNotifications(@PathVariable String recipientEmail, @PathVariable int pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber - 1, 5);
-        return notificationService.getNotificationsByPage(recipientEmail, pageable);
+    @GetMapping("/getNotifications")
+    public NotificationList getNotifications(@RequestBody String requestBody) {
+        JSONObject jsonBody = new JSONObject(requestBody);
+        String userId = jsonBody.getString("userId");
+        String cursor = jsonBody.optString("cursor");
+        log.info("Getting notifications for user: {}", userId);
+        return notificationService.getNotifications(userId, cursor);
     }
 
     /**
      *
-     * @param notificationId The database id of the notification to be deleted
+     * @param Notification The database id of the notification to be deleted
      * @return The notification that was deleted if it was deleted successfully
      * */
-    @DeleteMapping("/deleteNotification/{notificationId}")
-    public Notification deleteNotification(@PathVariable String notificationId) {
-        return notificationService.deleteNotification(notificationId);
+    @DeleteMapping("/deleteNotification")
+    public Notification deleteNotification(@RequestBody Notification notification) {
+        log.info("Deleting notification: {}", notification);
+        return notificationService.deleteNotification(notification);
     }
 
 }

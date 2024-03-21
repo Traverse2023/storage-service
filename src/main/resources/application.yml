@@ -1,15 +1,12 @@
 
 aws:
   region: us-east-1
-  dynamodb:
-    endpoint: ${DYNAMODB_ENDPOINT}
- #   accessKey: ${DYNAMODB_ACCESS_KEY}
- #   secretKey: ${DYNAMODB_SECRET_KEY}
-#    sessionToken: ${DYNAMODB_ENDPOINT}
+  endpoint: ${AWS_ENDPOINT:#{null}}
+  kms:
+    keyId: ${PAGINATION_KEY_ID:00000000-0000-0000-0000-000000000001}
+
 spring:
   main:
     allow-bean-definition-overriding: true
-  data:
-    mongodb:
-      uri: ${MONGO_URL}
+
 

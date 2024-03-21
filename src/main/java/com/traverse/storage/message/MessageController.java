@@ -1,13 +1,20 @@
 package com.traverse.storage.message;
 
-import com.traverse.storage.models.MessagesResponse;
+import com.traverse.storage.models.Message;
+import com.traverse.storage.models.MessageList;
+import com.traverse.storage.models.MessageType;
+import com.traverse.storage.utils.exceptions.mongo.MessagesNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.traverse.storage.models.Message;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @RestController
@@ -20,30 +27,66 @@ public class MessageController {
     MessageController(MessageService messageService) {
         this.messageService = messageService;
     }
-    
-    @GetMapping("/{groupId}/{channelName}/{pageNumber}")
-    public MessagesResponse getMessages(@PathVariable String groupId, @PathVariable String channelName, @PathVariable int pageNumber) {
+
+    /**
+     *
+     */
+    @GetMapping("/{groupId}/{channelName}")
+    public MessageList getMessages(@PathVariable String groupId, @PathVariable String channelName, @RequestBody(required = false) String requestBody) throws MessagesNotFoundException {
         log.info("Getting messages...");
-        return messageService.getMessages(groupId, channelName, pageNumber);
+        JSONObject jsonBody = new JSONObject(requestBody!= null ? requestBody : "{}");
+        return messageService.getMessages(groupId, channelName, jsonBody.optString("cursor"));
     }
 
-//    @SqsListener(value = "${cloud.aws.end_point.uri}", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
-//    public void receiveMessageFromQueue(Message message) {
-//        log.info("Receiving message from SQS...\n{}", message.toString());
-//        messageService.saveMessage(message);
-//    }
+    /**
+     *
+     */
     @PostMapping("/addMessage")
-    public void receiveMessageFromQueue(@RequestBody String requestBody) {
-        JSONObject jsonBody = new JSONObject(requestBody);
-        log.info("Receiving message from Main Service...\n{}", jsonBody.toString());
-        Message message = new Message();
-        message.setEmail(jsonBody.getString("email"));
-        message.setText(jsonBody.getString("text"));
-        message.setFirstName(jsonBody.getString("firstName"));
-        message.setLastName(jsonBody.getString("lastName"));
-        message.setTime(LocalDateTime.now());
-        message.setGroupId(jsonBody.getString("groupId"));
-        message.setChannelName(jsonBody.getString("channelName"));
-        messageService.saveMessage(message);
+    public Message createMessage(@RequestBody Message message) {
+        log.info("Creating message:\n{}", message);
+        return messageService.createMessage(message);
+
     }
+
+    /**
+     *
+     */
+    @DeleteMapping("/deleteMessage")
+    public Message deleteMessage(@RequestBody Message message){
+        Message deletedMessage = messageService.deleteMessage(message);
+        log.info("Deleted message: \n{}", deletedMessage);
+        return deletedMessage;
+    }
+
+    /**
+     *
+     */
+//    @GetMapping
+//    public Message getMessage(final String pk, final String sk){
+//        return messageService.getMessage();
+//    }
+//
+//    /**
+//     *
+//     */
+//    @PatchMapping
+//    public Message editMessage(final String pk, final String sk) {
+//        return messageService.editMessage();
+//    }
+//
+//    /**
+//     *
+//     */
+//    @DeleteMapping
+//    public void deleteChat(final String pk) {
+//        messageService.deleteChat();
+//    }
+//
+//    /**
+//     *
+//     */
+//    @DeleteMapping
+//    public void deleteGroup(final String groupId){
+//        messageService.deleteGroup();
+//    }
 }
