@@ -41,7 +41,6 @@ public class Message {
 
     String text;
 
-
     List<String> media;
 
     String updated;
