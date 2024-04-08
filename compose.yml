@@ -1,61 +1,20 @@
 services:
-#  dynamodb:
-#    user: root
-#    container_name: dynamodb
-#    image: amazon/dynamodb-local:latest
-#    hostname: dynamodb
-#    ports:
-#      - 8050:8050
-#    volumes:
-#      - dynamodb_data:/home/dynamodblocal/data
-#    working_dir: /home/dynamodblocal
-#    command: "-jar DynamoDBLocal.jar -port 8050 -sharedDb -dbPath ./data"
-#
-#  dynamodb-setup:
-#    depends_on:
-#      - dynamodb
-#    image: amazon/aws-cli
-#    volumes:
-#      - ./docker-scripts:/tmp/dynamo
-#    environment:
-#      AWS_ACCESS_KEY_ID: DUMMY
-#      AWS_SECRET_ACCESS_KEY: DUMMY
-#      DYNAMODB_ENDPOINT: http://dynamodb:8050
-#    entrypoint: bash
-#    command: "-c '/tmp/dynamo/seedscript.sh'"
-#
-#  dynamodb-admin:
-#    image: aaronshaf/dynamodb-admin
-#    ports:
-#      - "8001:8001"
-#    environment:
-#      DYNAMO_ENDPOINT: "http://dynamodb:8050"
-#      AWS_REGION: "us-east-1"
-#      AWS_ACCESS_KEY_ID: DUMMY
-#      AWS_SECRET_ACCESS_KEY: DUMMY
-#    depends_on:
-#      dynamodb:
-#        condition: service_started
 
   localstack:
     container_name: localstack
-    image: localstack/localstack
+    image: localstack/localstack:3.2
     ports:
       - 4563-4599:4563-4599
       - 8055:8080
     environment:
       - SERVICES=dynamodb,kms
-      - DEFAULT_REGION=us-east-1
       - DEBUG=1
       - PERSISTENCE=1
       - DYNAMODB_SHARE_DB=1
-      - DATA_DIR=/var/lib/localstack
     volumes:
-      - ./seedscript.sh:/etc/localstack/init/ready.d/init-aws.sh
+      - ./create-aws-data.sh:/etc/localstack/init/ready.d/init-aws.sh
       - localstack_data:/var/lib/localstack
-
-
-
+      - /var/run/docker.sock:/var/run/docker.sock
 
   storage-service:
     platform: linux/x86_64
@@ -77,8 +36,8 @@ services:
         - action: rebuild
           path: ./storage-service/pom.xml
         - action: sync
-          path: ./storage-service
-          target: /storage-service
+          path: ./storage-service/src
+          target: /app/src
 
 volumes:
   localstack_data:

@@ -107,8 +107,7 @@ public class NotificationDynamoDBRepository implements NotificationRepository {
                 .tableName(TABLE_NAME)
                 .keyConditionExpression("#pk = :pkValue")
                 .expressionAttributeNames(expressionAttributesNames)
-                .expressionAttributeValues(expressionAttributeValues)
-                .limit(PAGE_SIZE);
+                .expressionAttributeValues(expressionAttributeValues);
 
         // Set exclusiveStartKey for next page if present. This indicates more items are left
         //  to query or that this is the initial request to get messages.
