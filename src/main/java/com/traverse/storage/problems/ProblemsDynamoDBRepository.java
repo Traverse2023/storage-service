@@ -86,25 +86,68 @@ public class ProblemsDynamoDBRepository implements ProblemsRepository {
         Map<String, String> expressionAttributeNames = new HashMap<>();
         Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
 
-        expressionAttributeNames.put("#level", "level");
+        expressionAttributeNames.put("#pk", "pk");
+        expressionAttributeNames.put("#sk", "sk");
+        //expressionAttributeNames.put("#level", "level");
+        //expressionAttributeNames.put("#problemId", "problemId");
+        expressionAttributeNames.put("#tags", "tags");
+        expressionAttributeNames.put("#misc", "misc");
+        expressionAttributeNames.put("#name", "name");
+
+        // Should ProblemID = sk+pk   1+easy
+        // ProblemID = sk
+        // is problem id sort key or is problem id the combination or a separate field entirely
+        // http://traverse/searchProblem?ProblemID=3838#E
+        // http://traverse/searchProblem?ProblemID=3838#M
+        // http://traverse/searchProblem?ProblemID=3838#H
+
+        //which partition? and what is the sort key
+
+        // ProblemId Problem1 | sk  = 1 | pk = level = easy
+        // ProblemId Problem2 | sk  = 1 | pk = level = medium
+        // ProblemID Problem3 | sk  = 2 | pk = level = easy
+        // ProblemID Problem4 | sk  = 2 | pk = level = medium
+        // ProblemID Problem5 | sk  = 1 | pk = level = hard
+
 
         //pk = part k  +  sort key
+        // fields { #pk-> pk }
+        // values {:pk -> 12312341234}
+        // Add partition key condition
 
-        expressionAttributeValues.put(":name", AttributeValue.builder().s(problemId).build());
+        expressionAttributeValues.put(":pk", AttributeValue.builder().s(level).build());
+        expressionAttributeValues.put(":sk", AttributeValue.builder().s(probSk).build());
+        //expressionAttributeValues.put(":level", AttributeValue.builder().s(level).build());
+        //expressionAttributeValues.put(":problemId", AttributeValue.builder().s(problemId).build());
+        expressionAttributeValues.put(":name", AttributeValue.builder().s(name).build());
+        expressionAttributeValues.put(":tags", AttributeValue.builder().ss(tags).build());
+        expressionAttributeValues.put(":misc", AttributeValue.builder().s(misc).build());
+        // add second partition key condition
 
-        StringBuilder keyConditionExpression = new StringBuilder("pk = :name");
+        StringBuilder keyConditionExpression = new StringBuilder();
 
-        // Add sort key condition for problemId
-        if(problemId != null && !problemId.isEmpty()){
-            keyConditionExpression.append("and #problemId = :problemId");
-            expressionAttributeValues.put(":problemId", AttributeValue.builder().s(problemId).build());
+        // name , level, probSk
+        // Include the partition key condition if it's provided
+        if (level != null && !level.isEmpty()) {
+            expressionAttributeNames.put("#pk", "pk");
+            expressionAttributeValues.put(":pk", AttributeValue.builder().s(level).build());
+            keyConditionExpression.append("#pk = :pk");
         }
-        // Add sort key condition for level
-        if(level != null && !level.isEmpty()){
-            keyConditionExpression.append("and #level = :level");
-            expressionAttributeValues.put(":level", AttributeValue.builder().s(problemId).build());
+
+        // Include the sort key condition if it's provided
+        if (probSk != null && !probSk.isEmpty()) {
+            if (!keyConditionExpression.isEmpty()) {
+                keyConditionExpression.append(" AND ");
+            }
+            expressionAttributeNames.put("#sk", "sk");
+            expressionAttributeValues.put(":sk", AttributeValue.builder().s(probSk).build());
+            keyConditionExpression.append("#sk = :sk");
         }
-        //GSI Global search index...
+
+        // Validate if at least one key condition is specified
+        if (keyConditionExpression.isEmpty()) {
+            throw new ProblemNotFoundException("At least one of 'pk' or 'sk' must be provided.");
+        }
 
         // Build the QueryRequest
         QueryRequest.Builder queryRequestBuilder = QueryRequest.builder()
@@ -113,25 +156,44 @@ public class ProblemsDynamoDBRepository implements ProblemsRepository {
                 .expressionAttributeNames(expressionAttributeNames)
                 .expressionAttributeValues(expressionAttributeValues)
                 .limit(PAGE_SIZE);
+
+        // Set exclusiveStartKey if pagination token is provided
+        if (paginationToken != null && !paginationToken.isEmpty()) {
+            try {
+                queryRequestBuilder.exclusiveStartKey(tokenSerializer.deserialize(paginationToken));
+            } catch (InvalidTokenException e) {
+                log.error("Bad request: unable to deserialize next token {}. Token is invalid.", paginationToken, e);
+                throw new ProblemNotFoundException("Bad request: unable to deserialize next token. Token is invalid." + e.getMessage());
+            }
+        }
+
+
+        // NOTE: Build the query request FINALLY
         QueryRequest queryRequest = queryRequestBuilder.build();
 
         // Execute the query
         QueryResponse queryResponse = client.query(queryRequest);
 
-        // Handle the response and return results
         List<Problem> problems = new ArrayList<>();
-        for (Map<String, AttributeValue> item : queryResponse.items()) {
-            Problem problem = table.mapToItem(item);
-            problems.add(problem);
+
+        // Populate problems after mapping them to Message class
+        queryResponse.items().forEach(m -> problems.add(table.tableSchema().mapToItem(m)));
+        Map<String, AttributeValue> lastEvaluatedKey = queryResponse.lastEvaluatedKey();
+
+        // Build the response
+        ProblemsList.ProblemsListBuilder problemsListBuilder = ProblemsList.builder()
+                .problems(problems);
+
+        if (lastEvaluatedKey != null && !lastEvaluatedKey.isEmpty()) {
+            problemsListBuilder.cursor(tokenSerializer.serialize(lastEvaluatedKey));
         }
 
+        // If no problems found, throw an exception
         if (problems.isEmpty()) {
             throw new ProblemNotFoundException("No problems found with the specified criteria.");
         }
 
-        // Serialize the pagination token for the next page, if available
-        String nextToken = queryResponse.hasLastEvaluatedKey() ? tokenSerializer.serialize(queryResponse.lastEvaluatedKey()) : null;
-
-        return new ProblemsList(problemId, nextToken);
+        // Handle the response and return results
+        return problemsListBuilder.build();
     }
 }
