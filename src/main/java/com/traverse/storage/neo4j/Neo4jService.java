@@ -61,11 +61,11 @@ public class Neo4jService<T> {
                         }
                         condition = "n." + fieldCriteria.getField() + " IN " + vals.toString();
                         break;
-                    //TODO RANGE case still needs to be tested
+                    //TODO Allow more reange types then just dates
                     case RANGE:
                         List<Object> values = fieldCriteria.getValues();
-                        if (values.size() == 2 && values.get(0) instanceof Date && values.get(1) instanceof Date) {
-                            condition = "n." + fieldCriteria.getField() + " >= $start AND n." + fieldCriteria.getField() + " <= $end";
+                        if (values.size() == 2) {
+                            condition = "n." + fieldCriteria.getField() + " >= datetime('" + values.get(0) + "') AND n." + fieldCriteria.getField() + " <= datetime('" + values.get(1) + "')";
                         } else {
                             continue;
                         }
