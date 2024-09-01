@@ -8,27 +8,18 @@ import lombok.Setter;
  *
  * This is a model class for User
  */
+@Getter
+@Setter
 public class User extends Neo4jNode {
 
-
-    @Getter
-    @Setter
     private String id;
 
-    @Getter
-    @Setter
     private String firstname;
 
-    @Getter
-    @Setter
     private String lastName;
 
-    @Getter
-    @Setter
     private String pfpUrl;
 
-    @Getter
-    @Setter
     private String username;
 
     public User() {

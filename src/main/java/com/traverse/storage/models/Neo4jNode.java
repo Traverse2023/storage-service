@@ -13,17 +13,13 @@ import java.util.Map;
  * with the search endpoints, for example UserController search returns User which is possible because Neo4jService search
  * returns List<Neo4jNode>
  */
+@Getter
+@Setter
 public class Neo4jNode {
 
-    @Getter
-    @Setter
     private String elementId;
 
-    @Getter
-    @Setter
     private String type;
 
-    @Getter
-    @Setter
     private Map<String, Object> properties;
 }

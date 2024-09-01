@@ -11,6 +11,8 @@ import java.util.List;
  * This is standardized, so should work for all databases, i.e. neo4j or dynamodb.
  *
  */
+@Getter
+@Setter
 public class CollectionSearchCriteria {
 
     /**
@@ -20,8 +22,6 @@ public class CollectionSearchCriteria {
      * To create a text index search in a neo4j db, run a command similar to this, which is used for user collection
      * CREATE FULLTEXT INDEX textIndex FOR (n:User) ON EACH [n.firstName, n.lastName, n.pfpUrl, n.username];
      */
-    @Getter
-    @Setter
     private String text;
 
     /**
@@ -32,14 +32,10 @@ public class CollectionSearchCriteria {
      * your search. It's an OR-based search. The latter example may not be the best example, but there may be cases
      * where we want an OR-based search.
      */
-    @Getter
-    @Setter
     private Boolean filter;
 
     /**
      * This is the field where all field-based criterias are provided.
      */
-    @Getter
-    @Setter
     private List<FieldSearchCriteria> fieldSearchCriterias;
 }
