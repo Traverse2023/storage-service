@@ -196,4 +196,11 @@ public class ProblemsDynamoDBRepository implements ProblemsRepository {
         // Handle the response and return results
         return problemsListBuilder.build();
     }
+    public Problem createProblem(Problem problem) {
+        final String sk = String.format("%s#%s", problem.getLevel(), problem.getProblemId());
+        Problem newProblem = problem.toBuilder().sk(sk).build();
+        table.putItem(problem);
+        log.info("Problem created successfully: \n{}", newProblem);
+        return newProblem;
+    }
 }
