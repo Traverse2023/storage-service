@@ -5,5 +5,5 @@ import com.traverse.storage.utils.exceptions.mongo.ProblemNotFoundException;
 import java.util.List;
 
 public interface ProblemsRepository {
-    ProblemsList getProblemsList(String name, String level, List<String> tags, String misc, String paginationToken) throws ProblemNotFoundException;
+    ProblemsList getProblemsList(String name,String Id, String level, List<String> tags, String misc, String paginationToken) throws ProblemNotFoundException;
 }

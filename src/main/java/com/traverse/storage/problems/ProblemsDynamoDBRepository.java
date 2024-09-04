@@ -34,9 +34,8 @@ import static software.amazon.awssdk.enhanced.dynamodb.mapper.StaticAttributeTag
 public class ProblemsDynamoDBRepository implements ProblemsRepository {
     private final DynamoDbClient client;
     private final TokenSerializer<Map<String, AttributeValue>> tokenSerializer;
-    private final DynamoDbTable<Problem> table;
+    static DynamoDbTable<Problem> table;
     private final String TABLE_NAME = "Problems";
-    private final int PAGE_SIZE = 20;
     static final StaticTableSchema<Problem> PROBLEM_STATIC_TABLE_SCHEMA =
             StaticTableSchema.builder(Problem.class)
                     .newItemSupplier(Problem::new)
@@ -75,13 +74,13 @@ public class ProblemsDynamoDBRepository implements ProblemsRepository {
 
     @Autowired
     ProblemsDynamoDBRepository(final DynamoDbEnhancedClient dynamoDbEnhancedClient, final PaginationTokenSerializer tokenSerializer, final DynamoDbClient dynamoDbClient) {
-        this.table = dynamoDbEnhancedClient.table(TABLE_NAME, PROBLEM_STATIC_TABLE_SCHEMA);
+        table = dynamoDbEnhancedClient.table(TABLE_NAME, PROBLEM_STATIC_TABLE_SCHEMA);
         this.client = dynamoDbClient;
         this.tokenSerializer = tokenSerializer;
     }
 
     @Override
-    public ProblemsList getProblemsList(String problemId, String level, List<String> tags, String misc, String paginationToken) throws ProblemNotFoundException {
+    public ProblemsList getProblemsList(String name, String problemId, String level, List<String> tags, String misc, String paginationToken) throws ProblemNotFoundException {
         // Build query conditions
         Map<String, String> expressionAttributeNames = new HashMap<>();
         Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
@@ -116,7 +115,7 @@ public class ProblemsDynamoDBRepository implements ProblemsRepository {
         // Add partition key condition
 
         expressionAttributeValues.put(":pk", AttributeValue.builder().s(level).build());
-        expressionAttributeValues.put(":sk", AttributeValue.builder().s(probSk).build());
+        expressionAttributeValues.put(":sk", AttributeValue.builder().s(problemId).build());
         //expressionAttributeValues.put(":level", AttributeValue.builder().s(level).build());
         //expressionAttributeValues.put(":problemId", AttributeValue.builder().s(problemId).build());
         expressionAttributeValues.put(":name", AttributeValue.builder().s(name).build());
@@ -135,12 +134,12 @@ public class ProblemsDynamoDBRepository implements ProblemsRepository {
         }
 
         // Include the sort key condition if it's provided
-        if (probSk != null && !probSk.isEmpty()) {
+        if (problemId != null && !problemId.isEmpty()) {
             if (!keyConditionExpression.isEmpty()) {
                 keyConditionExpression.append(" AND ");
             }
             expressionAttributeNames.put("#sk", "sk");
-            expressionAttributeValues.put(":sk", AttributeValue.builder().s(probSk).build());
+            expressionAttributeValues.put(":sk", AttributeValue.builder().s(problemId).build());
             keyConditionExpression.append("#sk = :sk");
         }
 
@@ -150,6 +149,7 @@ public class ProblemsDynamoDBRepository implements ProblemsRepository {
         }
 
         // Build the QueryRequest
+        int PAGE_SIZE = 20;
         QueryRequest.Builder queryRequestBuilder = QueryRequest.builder()
                 .tableName(TABLE_NAME)
                 .keyConditionExpression(keyConditionExpression.toString())
@@ -196,11 +196,12 @@ public class ProblemsDynamoDBRepository implements ProblemsRepository {
         // Handle the response and return results
         return problemsListBuilder.build();
     }
-    public Problem createProblem(Problem problem) {
-        final String sk = String.format("%s#%s", problem.getLevel(), problem.getProblemId());
-        Problem newProblem = problem.toBuilder().sk(sk).build();
-        table.putItem(problem);
-        log.info("Problem created successfully: \n{}", newProblem);
-        return newProblem;
-    }
+
+//    public Problem createProblem(Problem problem) {
+//        final String sk = String.format("%s#%s", problem.getLevel(), problem.getProblemId());
+//        Problem newProblem = problem.toBuilder().sk(sk).build();
+//        table.putItem(problem);
+//        log.info("Problem created successfully: \n{}", newProblem);
+//        return newProblem;
+//    }
 }
